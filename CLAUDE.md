@@ -2,13 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Rules for working in this repository. **Follow them strictly.** If a rule blocks the task,
+say so and stop — do not improvise around it.
+
+Two companion documents, equally binding:
+- [Improve_design_functionaly.md](Improve_design_functionaly.md) — audit + roadmap of pending
+  improvements, by phase
+- `DESIGN.md` — locked design system (created in phase 1; not yet on disk)
+
 ## Project
 
-`cinemapedia` — Flutter movie browser for **iOS and Android only** (no web/desktop). TMDB API for content, Drift for local favorites, Riverpod for state, go_router for nav.
+`cinemapedia` — Flutter movie browser for **iOS and Android only** (no web/desktop). TMDB API for
+content, Drift for local favorites, Riverpod for state, go_router for nav.
 
 - Flutter SDK: `^3.6.0`
 - Branches: `main` (PRs) / `develop` (work)
-- No tests, no CI.
+- Org (Android): `com.example.cinemapedia` (rename in phase 0)
+- No tests, no CI yet.
 
 ## Commands
 
@@ -40,11 +50,13 @@ dart run flutter_launcher_icons
 dart run flutter_native_splash:create
 ```
 
-`.env` is gitignored. `main()` calls `WidgetsFlutterBinding.ensureInitialized()` then `dotenv.load(fileName: '.env')` before `runApp` — no env = crash on first network call.
+`.env` is gitignored. `main()` calls `WidgetsFlutterBinding.ensureInitialized()` then
+`dotenv.load(fileName: '.env')` before `runApp` — no env = crash on first network call.
 
 ## Architecture
 
-Clean Architecture, three layers under `lib/`. Imports flow inward: `presentations` → `domain` ← `infrastructure`.
+Clean Architecture, three layers under `lib/`. Imports flow inward: `presentations` → `domain` ←
+`infrastructure`.
 
 ```
 lib/
@@ -53,7 +65,7 @@ lib/
 │   ├── database/database.dart       # Drift schema (FavoriteMovies table) + AppDatabase
 │   ├── database/database.g.dart     # GENERATED — do not edit; regenerate via build_runner
 │   ├── router/app_router.dart       # go_router, see "Routes" below
-│   ├── theme/app_theme.dart
+│   ├── theme/                       # design tokens — populated in phase 1
 │   └── helpers/human_formats.dart
 ├── domain/                          # pure Dart, no Flutter/IO imports
 │   ├── entities/                    # Movie, Actor, ActorDetails, Genre, MovieVideos, WatchProviders
@@ -66,12 +78,12 @@ lib/
 │       ├── watch_providers_datasource.dart
 │       └── local_storage_datasource.dart
 ├── repositories/                    # abstract contracts (parallel to domain/datasources/)
-│   └── movies_repository.dart, actors_repository.dart, …  (7 total)
+│   └── 7 files (movies, actors, actor_details, genre, movie_videos, watch_providers, localstorage)
 ├── infrastructure/                  # concrete impls
 │   ├── datasources/                 # one per domain datasource: moviedb_* + local_storage_favoritedb
 │   ├── mappers/                     # DTO → entity; movie_mapper handles MovieMovieDB + MovieDetails
 │   ├── models/moviedb/              # DTOs (MovieMovieDB, MovieDetails, CreditsResponse, ActorCreditsResponse)
-│   └── reporsitories/               # ⚠ typo — see landmines
+│   └── repositories/                # repo impls (renamed from "reporsitories" in phase 0)
 └── presentations/
     ├── views/home/                  # HomeView, CategoriesView, FavoritesView (tab bodies)
     ├── screens/movies/              # HomeScreen (tab host), MovieScreen, ActorScreen, MoviesByGenreScreen
@@ -88,16 +100,97 @@ lib/
 
 ### Layer rules
 
-- New external system (TMDB endpoint, local table, etc.) → add abstract to `domain/datasources/`, implementation to `infrastructure/datasources/`, abstract repo to `repositories/`, repo impl to `infrastructure/reporsitories/`, wire in `presentations/providers/<feature>/`.
-- DI is constructor injection. New datasource: create provider in `presentations/providers/<feature>/`, pass datasource into repo, expose repo via Provider.
-- `MoviesNotifier` is the universal paginated list notifier — reused by 4 lists + 2 family providers (`similarMoviesProvider(movieId)`, `moviesByGenreProvider(genreId)`). Has built-in `isLoading` guard + 300ms post-page delay.
-- DB is **not** injected — `AppDatabase()` is instantiated inline in `LocalStorageFavoriteDBDatasource`. App-wide singleton, fine for now, but means tests need overrides.
-- Barrel files: `presentations/providers/providers.dart`, `widgets.dart`, `screens.dart`, `views/views.dart`. Add exports there when adding new modules.
-- All UI strings are Spanish (`'En cines'`, `'Próximamente'`, `'Categorías'`, etc.). Theme color constants `0xFF0E1427`, `0xFF121A34`, `0xFF16213E` recur across screens — there's no shared gradient helper, copy/paste is the convention.
+- New external system (TMDB endpoint, local table, etc.) → add abstract to `domain/datasources/`,
+  implementation to `infrastructure/datasources/`, abstract repo to `repositories/`, repo impl to
+  `infrastructure/repositories/`, wire in `presentations/providers/<feature>/`.
+- DI is constructor injection. New datasource: create provider in
+  `presentations/providers/<feature>/`, pass datasource into repo, expose repo via `Provider`.
+- `MoviesNotifier` is the universal paginated list notifier — reused by 4 lists + 2 family
+  providers (`similarMoviesProvider(movieId)`, `moviesByGenreProvider(genreId)`). Has built-in
+  `isLoading` guard + 300ms post-page delay.
+- DB injection: `LocalStorageFavoriteDBDatasource` accepts `AppDatabase` via constructor
+  (cleaned up in phase 0 — was inline before).
+- Barrel files: `presentations/providers/providers.dart`, `widgets.dart`, `screens.dart`,
+  `views/views.dart`. Add exports there when adding new modules.
+
+## The two languages
+
+Strictly enforced.
+
+**Everything the user reads is in Spanish (es-MX, tuteo).** Labels, buttons, titles, hints,
+validation messages, error messages, snackbars, tooltips, empty states, share text.
+Exceptions: the product name (`cinemapedia`), and developer errors that only ever reach a log or
+a debug console.
+
+**Everything a developer reads is in English.**
+
+- All code in English: class names, variables, methods, file names, folders.
+- All comments in English.
+- Comments are **short — one line**. Explain *why*, never *what*. If the code needs a paragraph
+  to be understood, rewrite the code instead. No file headers, no doc blocks, no section
+  banners, no commented-out code.
+
+```dart
+// Drift queries happen on the main isolate; pagination limits row reads.
+```
+
+## Reuse first
+
+Before writing anything new:
+
+1. Does it already exist in `presentations/widgets/shared/`, `config/helpers/`, or the
+   `domain/` entities? Use it.
+2. Does the Dart/Flutter stdlib cover it? Use it (`intl`, `DateTime`, `Iterable`, …).
+3. Does an already-installed dependency cover it? Use it.
+4. Only then write it — as the smallest thing that works.
+
+**Never add a dependency without asking the user first.** State what it replaces and why a few
+lines of code are not enough.
+
+## No speculative code
+
+- No abstraction with a single implementation. No interface, no factory, no base class "for later".
+- No config for a value that never changes.
+- No empty scaffolding files, no placeholder features.
+- Build exactly what the current feature needs.
+
+## File naming
+
+All `snake_case`, always suffixed by its kind:
+
+```
+home_screen.dart              class HomeScreen
+home_view.dart                class HomeView
+movie_horizontal_listview.dart   class MovieHorizontalListview
+movie_mapper.dart             class MovieMapper
+movies_repository.dart        abstract MoviesRepository
+movies_repository_impl.dart   class MoviesRepositoryImpl
+movies_datasource.dart        abstract MoviesDatasource
+moviedb_datasource.dart       class MoviedbDatasource
+```
+
+One public class per file. The file name matches the class name in `snake_case`.
+
+## File length
+
+- **Hard cap: 300 lines per file.** Over it, split — extract widgets, views, or helpers.
+- A `build()` method over ~80 lines means a missing widget. Extract it.
+- Known current deviations (to be split in phase 7): `movie_screen.dart` (~651 lines),
+  `actor_screen.dart` (~338 lines). Add new code outside them rather than growing.
+
+## Theming
+
+All colors, text styles, spacing, radii, and motion come from `config/theme/`. **A widget that
+hardcodes a color, a size, a radius, or a duration is a bug.** Branch on
+`Theme.of(context).brightness`, not on a boolean flag.
+
+Phase 1 will introduce the tokens. Until then, the existing hardcoded values are tolerated —
+do not add *new* hardcoded colors, durations, or radii.
 
 ## Routes (`config/router/app_router.dart`)
 
-`go_router` with nested routes under `/home/:page`. The `:page` param is the tab index (0=Home, 1=Categories, 2=Favorites), switched via `IndexedStack` inside `HomeScreen`.
+`go_router` with nested routes under `/home/:page`. The `:page` param is the tab index
+(0=Home, 1=Categories, 2=Favorites), switched via `IndexedStack` inside `HomeScreen`.
 
 | Path | Screen | Params |
 |---|---|---|
@@ -107,22 +200,68 @@ lib/
 | `/home/:page/actor/:id` | `ActorScreen` | `actorId: string` |
 | `/home/:page/genre/:id/:name` | `MoviesByGenreScreen` | `genreId, genreName` |
 
-Navigation convention: nested screens are pushed via `context.push('/home/<currentTab>/<kind>/<id>/<name?>')`, never direct pushes. `CustomBottomNavigation` always uses `context.go('/home/<i>')` (resets the stack).
+Navigation convention: nested screens are pushed via
+`context.push('/home/<currentTab>/<kind>/<id>/<name?>')`, never direct pushes.
+`CustomBottomNavigation` always uses `context.go('/home/<i>')` (resets the stack).
 
 ## Data sources
 
-- **TMDB**: `MoviedbDatasource` (and siblings) own a `Dio` client with `api_key` query param + `Authorization: Bearer <token>` header. Locale hardcoded `es-MX` in `BaseOptions.queryParameters`.
-- **Image URLs**: built in `MovieMapper.movieDBToEntity` (`https://image.tmdb.org/t/p/w500{path}`). The literal `'no-poster'` is the sentinel for missing artwork; datasource filters those out before mapping.
-- **Favorites**: Drift DB at `config/database/database.dart`, table `FavoriteMovies`. Provider: `favoriteMoviesProvider` (StateNotifierProvider holding `Map<int, Movie>` keyed by `movieId`).
+- **TMDB**: `MoviedbDatasource` (and siblings) own a `Dio` client with `api_key` query param +
+  `Authorization: Bearer <token>` header. Locale hardcoded `es-MX` in `BaseOptions.queryParameters`.
+- **Image URLs**: built in `MovieMapper.movieDBToEntity` (`https://image.tmdb.org/t/p/w500{path}`).
+  The literal `'no-poster'` is the sentinel for missing artwork; datasource filters those out
+  before mapping.
+- **Favorites**: Drift DB at `config/database/database.dart`, table `FavoriteMovies`. Provider:
+  `favoriteMoviesProvider` (StateNotifierProvider holding `Map<int, Movie>` keyed by `movieId`).
+- **Image cache**: split today — some places use `Image.network`, others `cached_network_image`.
+  Phase 1 will standardize on `cached_network_image` everywhere.
+
+## Gitflow
+
+- `main` — only release and hotfix merges
+- `develop` — only feature, release, and hotfix merges
+- `feature/<kebab-case>` — local-only branches, deleted on merge
+- All merges use `--no-ff`
+- The user makes all commits. Never `git commit`, `git merge`, `git push`, or `git tag` unless
+  explicitly asked in that message
+- Commit format: `tipo(alcance): asunto en minúscula, imperativo, sin punto final`
+
+Allowed types: `feat` `fix` `refactor` `docs` `test` `chore` `ci` `build` `perf` `style`
+
+## Definition of done
+
+A change is done only when:
+
+1. It does what was asked — no more.
+2. `flutter analyze` exits clean.
+3. No file exceeds 300 lines (unless it's a known deviation in phase 7 cleanup).
+4. Naming, layering, and comment rules above are respected.
+5. No file hardcodes a color, duration, radius, or spacing (after phase 1 lands).
+6. Nothing was committed (the user commits).
 
 ## Known landmines
 
-- **Folder typo**: `lib/infrastructure/reporsitories/` (missing an `i`). Every import in the repo points to it. Rename + fix imports together if you ever do.
-- **DB singleton**: `LocalStorageFavoriteDBDatasource` does `final db = AppDatabase()` in the field — no constructor injection. Easy to forget when writing tests; override the provider.
-- **MoviesNotifier debounce**: built-in 300ms `Future.delayed` after every page load — do not call `loadNextPage` expecting sub-300ms re-entrancy.
-- **Riverpod import clash in MovieScreen**: imports `flutter_riverpod` with `hide ProviderRef` because the `watch_providers` entity also exports a `ProviderRef` class. Don't reorder these imports casually.
-- **Provider barrel is incomplete**: `presentations/providers/providers.dart` only re-exports `movies/`, `search/`. New provider folders need their export added.
-- **`Assets` not registered**: `assets/icon.png` and `assets/splash/splash.png` are referenced in pubspec but `flutter:` has no `assets:` list — only `.env` is. Add the asset entries if any new image asset ships.
-- **`.metadata` lists removed platforms** (linux, macos, windows, web) in its migration block. Harmless at runtime, regenerate with `flutter create . --platforms=android,ios` if it bothers you.
-- **`test/widget_test.dart`**: stale default counter test (will fail to compile against real `MainApp`). Fix or delete before `flutter test`.
-- **iOS scheme**: a previous `flutter create --platforms=ios .` was needed to repair a malformed `Runner.xcscheme.xml`. If iOS builds start failing with LLDB Init File errors again, re-run that command.
+- **`Movie.releaseDate` typing**: declared `DateTime` in `domain/entities/movie.dart` but
+  `movies_slideshow.dart` and `search_movies_delegate.dart` do `(m as dynamic).releaseDate` and
+  handle it as both `DateTime` and `String`. Decision needed in phase 7.
+- **Riverpod import clash in `MovieScreen`**: imports `flutter_riverpod` with `hide ProviderRef`
+  because `watch_providers.dart` also exports a `ProviderRef` class. Fix in phase 7 by renaming
+  the model class.
+- **`SearchMoviesDelegate`**: `cleanStreams()` closes `debounceMovies` but **not**
+  `isLoadingStream` — minor leak each time you open search. Fixed in phase 0.
+- **Provider barrel is incomplete**: `presentations/providers/providers.dart` only re-exports
+  `movies/`, `search/`. New provider folders need their export added.
+- **`MovieMasonry` layout hack**: `if (index == 1) ... SizedBox(height: 30)` to inset the second
+  tile. Will break if column count changes. Replace with `MasonryGridView.staggered` in phase 7.
+- **`'Lunes 20'` hardcoded** in `HomeScreen._HomeView.build` for the "En cines" subtitle. Not
+  today-specific. Replace with `intl` `DateFormat('EEEE d')` in phase 7.
+- **`.metadata` lists removed platforms** (linux, macos, windows, web) in its migration block.
+  Harmless at runtime, regenerate with `flutter create . --platforms=android,ios` if it bothers
+  you.
+- **`test/widget_test.dart`**: stale default counter test (will fail to compile against real
+  `MainApp`). Rewritten in phase 0.
+- **iOS scheme**: a previous `flutter create --platforms=ios .` was needed to repair a malformed
+  `Runner.xcscheme.xml`. If iOS builds start failing with LLDB Init File errors again, re-run
+  that command.
+- **Android `package`**: `com.example.cinemapedia` is the default. Should be `com.davidag.cinemapedia`
+  or similar before the first Play upload — phase 0.
