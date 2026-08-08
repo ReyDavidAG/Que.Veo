@@ -1,4 +1,5 @@
 import 'package:cinemapedia/presentations/providers/favorites_localstorage/favorites_provider.dart';
+import 'package:cinemapedia/presentations/providers/favorites_localstorage/is_favorite_movie_provider.dart';
 import 'package:cinemapedia/presentations/widgets/movies/movies_masonry.dart';
 import 'package:cinemapedia/presentations/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -38,11 +39,22 @@ class FavoritesViewState extends ConsumerState<FavoritesView> {
               ? const EmptyStateWidget(
                   icon: Icons.favorite_border,
                   title: 'Aún no tienes favoritos',
-                  body: 'Toca el corazón en cualquier película para guardarla aquí.',
+                  body: 'Toca el corazón en cualquier película para guardarla aquí. Mantén presionado para quitar.',
                 )
               : MovieMasonry(
                   movies: myMovieList,
                   loadNextPage: () => ref.read(favoriteMoviesProvider.notifier).loadNextPage(),
+                  onMovieLongPress: (movie) async {
+                    await ref.read(favoriteMoviesProvider.notifier).toggleFavoriteMovie(movie);
+                    ref.invalidate(isFavoriteMovieProvider(movie.id));
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Quitado de favoritos'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
                 ),
         ),
       ],
