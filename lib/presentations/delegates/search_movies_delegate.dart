@@ -17,7 +17,9 @@ class SearchMoviesDelegate extends SearchDelegate<Movie?> {
   SearchMoviesDelegate({required this.searchMovies, required this.previousResults});
 
   void cleanStreams() {
+    _debounceTimer?.cancel();
     debounceMovies.close();
+    isLoadingStream.close();
   }
 
   void _onQueryChanged(String query) {
