@@ -19,6 +19,8 @@ import 'package:flutter/services.dart';
 // Ocultamos 'ProviderRef' de Riverpod para usar el de nuestra entidad
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide ProviderRef;
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MovieScreen extends ConsumerStatefulWidget {
@@ -131,6 +133,16 @@ class _CustomSliverAppBar extends ConsumerWidget {
       expandedHeight: size.height * 0.7,
       foregroundColor: Colors.white,
       actions: [
+        IconButton(
+          onPressed: () => SharePlus.instance.share(
+            ShareParams(
+              text: 'https://www.themoviedb.org/movie/${movie.id} — ${movie.title}',
+            ),
+          ),
+          icon: const Icon(Icons.ios_share),
+          color: Colors.white,
+          tooltip: 'Compartir',
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: AnimatedHeartButton(isFavorite: isFavorite, onTap: toggleFavorite),
@@ -537,15 +549,15 @@ class _NewWatchProvidersDisplay extends StatelessWidget {
     // 3. Creamos las tabs dinámicamente
     if (streamProviders.isNotEmpty) {
       tabs.add(const Tab(text: 'Streaming'));
-      tabViews.add(_ProviderGrid(providers: streamProviders));
+      tabViews.add(_ProviderGrid(providers: streamProviders, link: options.link));
     }
     if (rentProviders.isNotEmpty) {
       tabs.add(const Tab(text: 'Rentar'));
-      tabViews.add(_ProviderGrid(providers: rentProviders));
+      tabViews.add(_ProviderGrid(providers: rentProviders, link: options.link));
     }
     if (buyProviders.isNotEmpty) {
       tabs.add(const Tab(text: 'Comprar'));
-      tabViews.add(_ProviderGrid(providers: buyProviders));
+      tabViews.add(_ProviderGrid(providers: buyProviders, link: options.link));
     }
 
     if (tabs.isEmpty) return const SizedBox.shrink();
@@ -586,7 +598,8 @@ class _NewWatchProvidersDisplay extends StatelessWidget {
 // --- WIDGET SECUNDARIO PARA EL CONTENIDO DE LAS TABS ---
 class _ProviderGrid extends StatelessWidget {
   final List<wp.ProviderRef> providers;
-  const _ProviderGrid({required this.providers});
+  final String link;
+  const _ProviderGrid({required this.providers, required this.link});
 
   @override
   Widget build(BuildContext context) {
@@ -598,13 +611,12 @@ class _ProviderGrid extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
-      // Usamos Wrap para que los chips se acomoden automáticamente
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Wrap(
           spacing: 8.0,
           runSpacing: 8.0,
-          children: providers.map((p) => _ProviderChip(provider: p)).toList(),
+          children: providers.map((p) => _ProviderChip(provider: p, deepLinkUrl: link)).toList(),
         ),
       ),
     );
@@ -614,39 +626,50 @@ class _ProviderGrid extends StatelessWidget {
 // --- WIDGET PARA MOSTRAR CADA LOGO + NOMBRE (VERSIÓN MEJORADA) ---
 class _ProviderChip extends StatelessWidget {
   final wp.ProviderRef provider;
-  const _ProviderChip({required this.provider});
+  final String? deepLinkUrl;
+  const _ProviderChip({required this.provider, this.deepLinkUrl});
+
+  void _open() {
+    final url = deepLinkUrl;
+    if (url == null || url.isEmpty) return;
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        // Usamos uno de los colores oscuros de tu gradiente
-        color: const Color(0xFF121A34),
-        borderRadius: BorderRadius.circular(20),
-        // Añadimos un borde sutil para darle definición
-        border: Border.all(color: Colors.white24, width: 0.5),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min, // Para que no se expanda
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10), // "Squircle"
-            child: Image.network(
-              provider.logoUrl(size: wp.WatchLogoSize.w45),
-              width: 30,
-              height: 30,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.broken_image, size: 30, color: Colors.white54),
+    return InkWell(
+      onTap: _open,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: const Color(0xFF121A34),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white24, width: 0.5),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                provider.logoUrl(size: wp.WatchLogoSize.w45),
+                width: 30,
+                height: 30,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.broken_image, size: 30, color: Colors.white54),
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            provider.providerName,
-            style: const TextStyle(fontSize: 12, color: Colors.white),
-          ),
-        ],
+            const SizedBox(width: 8),
+            Text(
+              provider.providerName,
+              style: const TextStyle(fontSize: 12, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
