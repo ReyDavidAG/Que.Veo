@@ -295,6 +295,29 @@ Funciona pero no es Riverpod idiomático. Mover el flag al provider.
 
 Cada fase es una rama `feature/<nombre>`, merge `--no-ff` a `develop` al terminar. No se solapan.
 
+| # | Fase | Estado |
+|---|---|---|
+| 0 | Housekeeping | ✅ Hecho en `feature/phase-0-housekeeping` (2026-08-08) |
+| 1 | Sistema de diseño | 🟡 Foundation en `feature/phase-1-design-system` (tokens + theme + DESIGN.md + CustomAppbar). Migración de widgets restantes por pantalla en fases siguientes |
+| 2 | Estados compartidos | Pendiente |
+| 3 | Favoritos Instagram | Pendiente |
+| 4 | Navegación y settings | Pendiente |
+| 5 | Compartir y watch providers | Pendiente |
+| 6 | Búsqueda con historial | Pendiente |
+| 7 | Pulido y limpieza | Pendiente |
+
+### Phase 0 — qué se hizo, qué se saltó
+
+Hecho:
+- Renombrado `lib/infrastructure/reporsitories/` → `repositories/` con `git mv`, 6 imports actualizados
+- Renombrado `local_storage_reposytory_provider.dart` → `local_storage_repository_provider.dart`, 2 imports actualizados
+- `LocalStorageFavoriteDBDatasource` ahora acepta `AppDatabase` por constructor (default `AppDatabase()`)
+- `SearchMoviesDelegate.cleanStreams()` cierra `isLoadingStream` y cancela el timer pendiente
+
+Saltado (a propósito):
+- **`widget_test.dart`**: el usuario revirtió mi rewrite al test de contador roto. No lo toco.
+- **`actors_respository_provider.dart` filename typo**: fuera del alcance explícito de phase 0, queda para phase 7.
+
 ### Fase 0 · Housekeeping
 
 **Rama**: `feature/audit-housekeeping`

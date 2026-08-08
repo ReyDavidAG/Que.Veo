@@ -4,7 +4,10 @@ import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:drift/drift.dart';
 
 class LocalStorageFavoriteDBDatasource implements LocalStorageDatasource {
-  final db = AppDatabase();
+  final AppDatabase db;
+
+  LocalStorageFavoriteDBDatasource({AppDatabase? database})
+      : db = database ?? AppDatabase();
   @override
   Future<bool> isMovieFavorite(int movieId) async {
     // Construir el query
