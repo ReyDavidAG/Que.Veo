@@ -299,7 +299,7 @@ Cada fase es una rama `feature/<nombre>`, merge `--no-ff` a `develop` al termina
 |---|---|---|
 | 0 | Housekeeping | ✅ Hecho en `feature/phase-0-housekeeping` (2026-08-08) |
 | 1 | Sistema de diseño | 🟡 Foundation en `feature/phase-1-design-system` (tokens + theme + DESIGN.md + CustomAppbar). Migración de widgets restantes por pantalla en fases siguientes |
-| 2 | Estados compartidos | Pendiente |
+| 2 | Estados compartidos | 🟡 Foundation en `feature/phase-2-shared-states` (EmptyStateWidget, ErrorRetryWidget, SkeletonLoader + barrel + FavoritesView wired). Error states pendientes — requieren refactor de providers a AsyncNotifier |
 | 3 | Favoritos Instagram | Pendiente |
 | 4 | Navegación y settings | Pendiente |
 | 5 | Compartir y watch providers | Pendiente |
