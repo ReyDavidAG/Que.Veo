@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/storage/app_preferences.dart';
+import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -172,7 +174,13 @@ class SearchMoviesDelegate extends SearchDelegate<Movie?> {
     _onQueryChanged(query);
     return _GradientScaffold(
       child: query.trim().isEmpty
-          ? const _IdleHint()
+          ? _IdleHint(
+              onSelect: (suggestion) {
+                query = suggestion;
+                _onQueryChanged(query);
+                showSuggestions(context);
+              },
+            )
           : _ResultsList(
               previousResults: previousResults,
               onSelect: (movie) {
@@ -206,27 +214,63 @@ class _GradientScaffold extends StatelessWidget {
 }
 
 class _IdleHint extends StatelessWidget {
-  const _IdleHint();
+  final ValueChanged<String> onSelect;
+  const _IdleHint({required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final recents = AppPreferences.instance.recentSearches;
     return Center(
       child: FadeIn(
         duration: const Duration(milliseconds: 250),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.search_rounded, size: 52, color: onPrimary.withAlpha(170)),
-            const SizedBox(height: 12),
-            Text(
-              'Busca por título, actor o director',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: onPrimary.withAlpha(200),
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search_rounded, size: 52, color: onPrimary.withAlpha(170)),
+              const SizedBox(height: 12),
+              Text(
+                'Busca por título, actor o director',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: onPrimary.withAlpha(200),
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              if (recents.isNotEmpty) ...[
+                const SizedBox(height: 32),
+                Text(
+                  'Búsquedas recientes',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.textHint,
+                        letterSpacing: 1.2,
+                      ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: recents
+                      .map(
+                        (q) => ActionChip(
+                          label: Text(q),
+                          onPressed: () => onSelect(q),
+                          backgroundColor: AppColors.surface,
+                          labelStyle: const TextStyle(color: AppColors.text),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: const BorderSide(color: AppColors.rule),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
