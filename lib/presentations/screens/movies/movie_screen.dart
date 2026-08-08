@@ -120,21 +120,20 @@ class _CustomSliverAppBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isFavorite = ref.watch(isFavoriteInMemoryProvider(movie.id));
 
+    Future<void> toggleFavorite() async {
+      await ref.read(favoriteMoviesProvider.notifier).toggleFavoriteMovie(movie);
+      ref.invalidate(isFavoriteMovieProvider(movie.id));
+    }
+
     final size = MediaQuery.of(context).size;
     return SliverAppBar(
       backgroundColor: Colors.black,
       expandedHeight: size.height * 0.7,
       foregroundColor: Colors.white,
       actions: [
-        IconButton(
-          onPressed: () async {
-            await ref.read(favoriteMoviesProvider.notifier).toggleFavoriteMovie(movie);
-            // opcional: sincronizar/validar con DB
-            ref.invalidate(isFavoriteMovieProvider(movie.id));
-          },
-          icon: isFavorite
-              ? const Icon(Icons.favorite, color: Colors.red)
-              : const Icon(Icons.favorite_border_outlined),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: AnimatedHeartButton(isFavorite: isFavorite, onTap: toggleFavorite),
         ),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -143,7 +142,10 @@ class _CustomSliverAppBar extends ConsumerWidget {
             style: const TextStyle(fontSize: 20, color: Colors.white),
             textAlign: TextAlign.start,
           ),
-          background: Stack(
+          background: DoubleTapToFavorite(
+            isFavorite: isFavorite,
+            onToggle: toggleFavorite,
+            child: Stack(
             children: [
               SizedBox.expand(
                 child: Image.network(
@@ -187,6 +189,7 @@ class _CustomSliverAppBar extends ConsumerWidget {
               ),
             ],
           )),
+        ),
     );
   }
 }
