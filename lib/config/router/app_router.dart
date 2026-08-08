@@ -1,14 +1,28 @@
+import 'package:cinemapedia/config/storage/app_preferences.dart';
 import 'package:cinemapedia/presentations/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
-    initialLocation: '/home/0',
+    initialLocation: '/',
+    redirect: (context, state) {
+      // First-launch redirect: send every route through onboarding until done.
+      final isOnboarding = state.matchedLocation == '/onboarding';
+      if (!AppPreferences.instance.onboardingDone && !isOnboarding) {
+        return '/onboarding';
+      }
+      if (AppPreferences.instance.onboardingDone && state.matchedLocation == '/') {
+        return '/home/0';
+      }
+      return null;
+    },
     errorBuilder: (context, state) {
       final String error = state.error?.message ?? 'Unknown error';
       return _ErrorScreen(error: error, statusCode: 404);
     },
     routes: [
+      GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
+      GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
       GoRoute(path: '/', redirect: (context, state) => '/home/0'),
       GoRoute(
           path: '/home/:page',

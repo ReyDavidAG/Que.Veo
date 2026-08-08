@@ -48,6 +48,12 @@ class CustomAppbar extends ConsumerWidget {
               color: AppColors.icon,
               tooltip: 'Buscar',
             ),
+            IconButton(
+              onPressed: () => context.push('/settings'),
+              icon: const Icon(Icons.settings_outlined),
+              color: AppColors.icon,
+              tooltip: 'Ajustes',
+            ),
           ],
         ),
       ),
