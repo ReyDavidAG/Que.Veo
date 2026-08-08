@@ -298,7 +298,7 @@ Cada fase es una rama `feature/<nombre>`, merge `--no-ff` a `develop` al termina
 | # | Fase | Estado |
 |---|---|---|
 | 0 | Housekeeping | ✅ Hecho en `feature/phase-0-housekeeping` (2026-08-08) |
-| 1 | Sistema de diseño | Pendiente |
+| 1 | Sistema de diseño | 🟡 Foundation en `feature/phase-1-design-system` (tokens + theme + DESIGN.md + CustomAppbar). Migración de widgets restantes por pantalla en fases siguientes |
 | 2 | Estados compartidos | Pendiente |
 | 3 | Favoritos Instagram | Pendiente |
 | 4 | Navegación y settings | Pendiente |
