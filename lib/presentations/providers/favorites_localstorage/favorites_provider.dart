@@ -1,6 +1,6 @@
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/infrastructure/mappers/movie_mapper.dart';
-import 'package:cinemapedia/presentations/providers/favorites_localstorage/local_storage_reposytory_provider.dart';
+import 'package:cinemapedia/presentations/providers/favorites_localstorage/local_storage_repository_provider.dart';
 import 'package:cinemapedia/repositories/localstorage_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
