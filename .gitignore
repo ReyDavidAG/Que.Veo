@@ -1,0 +1,67 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# Backup / crash dumps from local tooling
+*.bak
+*.hprof
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+.vscode/*
+!.vscode/launch.json
+.fleet/
+.zed/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Secrets / environment
+.env
+.env.*
+!.env.template
+*.pem
+*.p8
+*.p12
+*.mobileprovision
+android/key.properties
+**/*.jks
+**/*.keystore
+
+# Local tooling
+.claude/settings.local.json
+
+# Reference project, not part of this app
+venceAppExample/
