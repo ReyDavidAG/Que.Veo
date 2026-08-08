@@ -6,8 +6,14 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 class MovieMasonry extends StatefulWidget {
   final List<Movie> movies;
   final Future<List<Movie>> Function()? loadNextPage;
+  final void Function(Movie movie)? onMovieLongPress;
 
-  const MovieMasonry({super.key, required this.movies, this.loadNextPage});
+  const MovieMasonry({
+    super.key,
+    required this.movies,
+    this.loadNextPage,
+    this.onMovieLongPress,
+  });
 
   @override
   State<MovieMasonry> createState() => _MovieMasonryState();
@@ -62,16 +68,24 @@ class _MovieMasonryState extends State<MovieMasonry> {
         crossAxisSpacing: 10,
         itemCount: widget.movies.length,
         itemBuilder: (context, index) {
+          final movie = widget.movies[index];
+          final tile = MoviePosterLink(
+            movie: movie,
+            onLongPress: widget.onMovieLongPress == null
+                ? null
+                : () => widget.onMovieLongPress!(movie),
+          );
+
           if (index == 1) {
             return Column(
               children: [
                 const SizedBox(height: 30),
-                MoviePosterLink(movie: widget.movies[index]),
+                tile,
               ],
             );
           }
 
-          return MoviePosterLink(movie: widget.movies[index]);
+          return tile;
         },
       ),
     );
