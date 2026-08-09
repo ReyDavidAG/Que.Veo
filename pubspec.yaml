@@ -1,7 +1,7 @@
 name: cinemapedia
-description: "A new Flutter project."
+description: "cinemapedia — Flutter movie browser for iOS and Android. Discover, search and save movies with TMDB data and a Drift-backed local favorites store."
 publish_to: "none"
-version: 0.1.0
+version: 1.0.0
 
 environment:
   sdk: ^3.6.0
