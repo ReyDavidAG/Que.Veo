@@ -12,19 +12,74 @@ class CustomAppbar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
-    final textStyle = Theme.of(context).textTheme.titleLarge?.copyWith(color: colors.text);
+    final brightness = Theme.of(context).brightness;
+    // Shadow only needed in light mode (dark already has contrast against poster).
+    final textShadow = brightness == Brightness.light
+        ? const [
+            Shadow(color: Color(0x66000000), blurRadius: 6, offset: Offset(0, 1)),
+          ]
+        : null;
+
+    final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
+          color: colors.text,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.4,
+          shadows: textShadow,
+        );
+
+    // 'colors' will be used by the action buttons below.
 
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding, vertical: AppSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.screenPadding,
+          vertical: AppSpacing.xs,
+        ),
         child: Row(
           children: [
-            Icon(Icons.movie_filter_sharp, size: 28, color: colors.icon),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [colors.accent, colors.accent.withAlpha(180)],
+                ),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
+                boxShadow: [
+                  BoxShadow(
+                    color: colors.accent.withAlpha(80),
+                    blurRadius: 12,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.movie_filter_rounded,
+                size: 22,
+                color: colors.accentInk,
+                shadows: const [
+                  Shadow(color: Color(0x66000000), blurRadius: 4, offset: Offset(0, 1)),
+                ],
+              ),
+            ),
             const SizedBox(width: AppSpacing.sm),
-            Text('QuéVeo', style: textStyle),
+            ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [colors.text, colors.accent],
+              ).createShader(bounds),
+              child: Text(
+                'QuéVeo',
+                style: titleStyle?.copyWith(color: Colors.white),
+              ),
+            ),
             const Spacer(),
-            IconButton(
+            _HeaderActionButton(
+              icon: Icons.search_rounded,
+              tooltip: 'Buscar',
               onPressed: () async {
                 final searchQuery = ref.read(searchQueryProvider);
                 final searchedMovies = ref.read(searchMoviesProvider);
@@ -42,18 +97,43 @@ class CustomAppbar extends ConsumerWidget {
                   context.push('/home/0/movie/${movie.id}');
                 }
               },
-              icon: const Icon(Icons.search),
-              color: colors.icon,
-              tooltip: 'Buscar',
             ),
-            IconButton(
-              onPressed: () => context.push('/settings'),
-              icon: const Icon(Icons.settings_outlined),
-              color: colors.icon,
+            _HeaderActionButton(
+              icon: Icons.tune_rounded,
               tooltip: 'Ajustes',
+              onPressed: () => context.push('/settings'),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _HeaderActionButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  const _HeaderActionButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return Material(
+      color: brightness == Brightness.light
+          ? Colors.white.withAlpha(180)
+          : Colors.white.withAlpha(20),
+      shape: const CircleBorder(),
+      child: IconButton(
+        icon: Icon(icon),
+        color: brightness == Brightness.light ? const Color(0xFF0E1427) : Colors.white,
+        tooltip: tooltip,
+        onPressed: onPressed,
       ),
     );
   }
