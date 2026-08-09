@@ -37,8 +37,13 @@ class _DoubleTapToFavoriteState extends State<DoubleTapToFavorite> with TickerPr
   @override
   void dispose() {
     _controller.dispose();
-    _entry?.remove();
+    _removeEntry();
     super.dispose();
+  }
+
+  void _removeEntry() {
+    _entry?.remove();
+    _entry = null;
   }
 
   void _handleDoubleTap() {
@@ -48,6 +53,7 @@ class _DoubleTapToFavoriteState extends State<DoubleTapToFavorite> with TickerPr
   }
 
   void _showOverlay() {
+    _removeEntry(); // drop any leftover entry from a previous double-tap
     final overlay = Overlay.of(context, rootOverlay: true);
     final renderBox = context.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
@@ -58,7 +64,7 @@ class _DoubleTapToFavoriteState extends State<DoubleTapToFavorite> with TickerPr
 
     _entry = OverlayEntry(
       builder: (_) {
-        return _FloatingHeart(center: center, onComplete: () => _entry?.remove());
+        return _FloatingHeart(center: center, onComplete: _removeEntry);
       },
     );
     overlay.insert(_entry!);
