@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/domain/entities/actor.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -99,7 +100,7 @@ class _ActorPillCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final cs = Theme.of(context).colorScheme;
+    final colors = context.colors;
 
     return Semantics(
       label:
@@ -120,7 +121,7 @@ class _ActorPillCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: cs.primary.withAlpha(25),
+                      color: colors.accent.withAlpha(25),
                       blurRadius: 10,
                       spreadRadius: 0,
                       offset: const Offset(0, 4),
@@ -150,7 +151,7 @@ class _ActorPillCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: cs.onPrimary,
+                  color: colors.text,
                   height: 1.1,
                 ),
               ),
@@ -161,9 +162,9 @@ class _ActorPillCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: cs.primary.withAlpha(25),
+                      color: colors.accent.withAlpha(25),
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: cs.primary.withAlpha(90), width: 0.8),
+                      border: Border.all(color: colors.accent.withAlpha(120), width: 0.8),
                     ),
                     child: Text(
                       actor.character!,
@@ -171,7 +172,7 @@ class _ActorPillCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.labelSmall?.copyWith(
-                        color: cs.onPrimary.withAlpha(220),
+                        color: colors.text,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.2,
                       ),
@@ -192,7 +193,7 @@ class _ActorImagePlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey.shade800,
+      color: context.colors.surfaceRaised,
       alignment: Alignment.center,
       child: const Padding(
         padding: EdgeInsets.all(8.0),
@@ -207,21 +208,21 @@ class _ActorImageFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            cs.primary.withAlpha(40),
-            cs.secondary.withAlpha(32),
-            cs.surface.withAlpha(28),
+            colors.accent.withAlpha(40),
+            colors.accent.withAlpha(32),
+            colors.surface.withAlpha(28),
           ],
         ),
       ),
       alignment: Alignment.center,
-      child: Icon(Icons.person, size: 48, color: cs.onPrimary.withAlpha(220)),
+      child: Icon(Icons.person, size: 48, color: colors.iconMuted),
     );
   }
 }
@@ -234,9 +235,9 @@ class _ActorsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final colors = context.colors;
     final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-          color: cs.onPrimary,
+          color: colors.text,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.2,
         );
@@ -251,16 +252,16 @@ class _ActorsHeader extends StatelessWidget {
             OutlinedButton(
               onPressed: () {},
               style: OutlinedButton.styleFrom(
-                foregroundColor: cs.primary,
+                foregroundColor: colors.accent,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                side: BorderSide(color: cs.primary),
+                side: BorderSide(color: colors.accent),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
                 subtitle!,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: cs.onPrimary,
+                      color: colors.text,
                     ),
               ),
             ),

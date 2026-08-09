@@ -251,7 +251,7 @@ class _ActorDetailsSection extends StatelessWidget {
                         children: actor.alsoKnownAs
                             .map((aka) => Chip(
                                   label: Text(aka, overflow: TextOverflow.ellipsis),
-                                  labelStyle: TextStyle(color: colors.accentInk),
+                                  labelStyle: TextStyle(color: colors.text),
                                   backgroundColor: colors.surfaceRaised,
                                   shape: RoundedRectangleBorder(
                                     side: BorderSide(color: colors.outlineVariant),
@@ -311,18 +311,18 @@ class _InfoChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.accent.withAlpha(28),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: colors.accent.withAlpha(90), width: 0.8),
+            border: Border.all(color: colors.accent.withAlpha(120), width: 0.8),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 16, color: colors.accentInk.withAlpha(230)),
+              Icon(icon, size: 16, color: colors.accent),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: colors.accentInk.withAlpha(230),
+                    color: colors.text,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.2,
