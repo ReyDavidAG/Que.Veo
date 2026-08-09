@@ -1,74 +1,64 @@
 import 'package:cinemapedia/config/storage/app_preferences.dart';
-import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/config/theme/app_spacing.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
+import 'package:cinemapedia/config/theme/theme_mode_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Settings: theme mode (cosmetic until a light theme ships), recent searches
-/// clear, app version. The language toggle is a placeholder until i18n is real.
-class SettingsScreen extends StatefulWidget {
+/// Settings: theme mode (live), recent searches clear, app version.
+/// The language toggle is a placeholder until i18n is real.
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  String _themeMode = 'dark';
-
-  @override
-  void initState() {
-    super.initState();
-    _themeMode = AppPreferences.instance.themeMode;
-  }
-
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
+    final themeMode = ref.watch(themeModeProvider);
     final version = '1.0.0'; // placeholder until pubspec.yaml is wired
 
     return Scaffold(
-      backgroundColor: AppColors.paper,
+      backgroundColor: colors.paper,
       appBar: AppBar(
         title: const Text('Ajustes'),
-        backgroundColor: AppColors.paper,
+        backgroundColor: colors.paper,
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.screenPadding),
         children: [
-          _SectionTitle('Apariencia'),
-          SegmentedButton<String>(
+          const _SectionTitle('Apariencia'),
+          SegmentedButton<ThemeMode>(
             segments: const [
-              ButtonSegment(value: 'system', label: Text('Sistema')),
-              ButtonSegment(value: 'light', label: Text('Claro')),
-              ButtonSegment(value: 'dark', label: Text('Oscuro')),
+              ButtonSegment(value: ThemeMode.system, label: Text('Sistema')),
+              ButtonSegment(value: ThemeMode.light, label: Text('Claro')),
+              ButtonSegment(value: ThemeMode.dark, label: Text('Oscuro')),
             ],
-            selected: {_themeMode},
-            onSelectionChanged: (selection) async {
-              setState(() => _themeMode = selection.first);
-              await AppPreferences.instance.setThemeMode(selection.first);
+            selected: {themeMode},
+            onSelectionChanged: (selection) {
+              ref.read(themeModeProvider.notifier).set(selection.first);
             },
           ),
-          const SizedBox(height: AppSpacing.xs2),
-          Text(
-            'El modo claro llega en una versión futura.',
-            style: textTheme.bodySmall?.copyWith(color: AppColors.textHint),
-          ),
           const SizedBox(height: AppSpacing.lg),
-          _SectionTitle('Idioma'),
+          const _SectionTitle('Idioma'),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.language, color: AppColors.icon),
+            leading: Icon(Icons.language, color: colors.icon),
             title: const Text('Español (México)'),
             subtitle: Text(
               'Próximamente: más idiomas.',
-              style: textTheme.bodySmall?.copyWith(color: AppColors.textHint),
+              style: textTheme.bodySmall?.copyWith(color: colors.textHint),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          _SectionTitle('Datos'),
+          const _SectionTitle('Datos'),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.history, color: AppColors.icon),
+            leading: Icon(Icons.history, color: colors.icon),
             title: const Text('Borrar historial de búsqueda'),
             onTap: () async {
               await AppPreferences.instance.setRecentSearches(const <String>[]);
@@ -82,7 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Center(
             child: Text(
               'cinemapedia · $version',
-              style: textTheme.bodySmall?.copyWith(color: AppColors.textHint),
+              style: textTheme.bodySmall?.copyWith(color: colors.textHint),
             ),
           ),
         ],
@@ -102,7 +92,7 @@ class _SectionTitle extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: AppColors.textMuted,
+              color: context.colors.textMuted,
               letterSpacing: 1.2,
             ),
       ),

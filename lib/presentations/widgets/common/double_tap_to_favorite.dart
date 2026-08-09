@@ -1,4 +1,4 @@
-import 'package:cinemapedia/config/theme/app_colors.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -127,7 +127,7 @@ class _FloatingHeartState extends State<_FloatingHeart> with SingleTickerProvide
               opacity: opacity,
               child: Transform.scale(
                 scale: scale,
-                child: const Icon(Icons.favorite, size: 120, color: AppColors.accent),
+                child: Icon(Icons.favorite, size: 120, color: context.colors.accent),
               ),
             ),
           ),

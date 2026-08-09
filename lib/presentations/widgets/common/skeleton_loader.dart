@@ -1,5 +1,5 @@
-import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/config/theme/app_spacing.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 
 /// Placeholder shown while data loads. A simple pulsing rectangle — no `shimmer`
@@ -43,6 +43,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return AnimatedBuilder(
       animation: _controller,
       builder: (_, __) {
@@ -51,7 +52,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader> with SingleTickerProvid
           width: widget.width,
           height: widget.height,
           decoration: BoxDecoration(
-            color: Color.lerp(AppColors.surface, AppColors.surfaceRaised, t),
+            color: Color.lerp(colors.surface, colors.surfaceRaised, t),
             borderRadius: BorderRadius.circular(widget.radius),
           ),
         );

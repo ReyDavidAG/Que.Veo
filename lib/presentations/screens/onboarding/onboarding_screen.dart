@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/storage/app_preferences.dart';
-import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/config/theme/app_spacing.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -50,8 +50,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Scaffold(
-      backgroundColor: AppColors.paper,
+      backgroundColor: colors.paper,
       body: SafeArea(
         child: Column(
           children: [
@@ -76,8 +77,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     curve: Curves.easeOut,
                   ),
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: AppColors.accentInk,
+                    backgroundColor: colors.accent,
+                    foregroundColor: colors.accentInk,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
                     ),
@@ -107,6 +108,7 @@ class _SlideView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.xl),
@@ -115,19 +117,19 @@ class _SlideView extends StatelessWidget {
         children: [
           FadeIn(
             duration: const Duration(milliseconds: 240),
-            child: Icon(slide.icon, size: 96, color: AppColors.accent),
+            child: Icon(slide.icon, size: 96, color: colors.accent),
           ),
           const SizedBox(height: AppSpacing.xl),
           Text(
             slide.title,
             textAlign: TextAlign.center,
-            style: textTheme.headlineMedium?.copyWith(color: AppColors.text),
+            style: textTheme.headlineMedium?.copyWith(color: colors.text),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
             slide.body,
             textAlign: TextAlign.center,
-            style: textTheme.bodyLarge?.copyWith(color: AppColors.textMuted),
+            style: textTheme.bodyLarge?.copyWith(color: colors.textMuted),
           ),
         ],
       ),
@@ -142,6 +144,7 @@ class _DotsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(count, (i) {
@@ -152,7 +155,7 @@ class _DotsIndicator extends StatelessWidget {
           width: active ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: active ? AppColors.accent : AppColors.iconMuted,
+            color: active ? colors.accent : colors.iconMuted,
             borderRadius: BorderRadius.circular(4),
           ),
         );

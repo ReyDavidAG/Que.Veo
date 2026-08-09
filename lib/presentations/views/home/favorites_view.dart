@@ -1,3 +1,4 @@
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/presentations/providers/favorites_localstorage/favorites_provider.dart';
 import 'package:cinemapedia/presentations/providers/favorites_localstorage/is_favorite_movie_provider.dart';
 import 'package:cinemapedia/presentations/widgets/movies/movies_masonry.dart';
@@ -23,16 +24,17 @@ class FavoritesViewState extends ConsumerState<FavoritesView> {
   Widget build(BuildContext context) {
     final favoriteMovies = ref.watch(favoriteMoviesProvider);
     final myMovieList = favoriteMovies.values.toList();
+    final heroGradient = context.colors.heroGradient;
 
     return Stack(
       children: [
         Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.black, Color(0xFF0E1427), Color(0xFF121A34)],
-              stops: [0.0, 0.35, 0.95],
+              colors: heroGradient,
+              stops: const [0.0, 0.35, 0.95],
             ),
           ),
           child: myMovieList.isEmpty

@@ -6,7 +6,7 @@ Code rules are in [CLAUDE.md](CLAUDE.md); the audit and roadmap are in
 
 ```
 Hallmark · genre: atmospheric · scope: system (mobile app)
-theme: Cinema (dark) · anchor hue: navy 250 + accent coral 350
+themes: Cinema (dark) + Cinema-light · anchor hue: navy 250 + accent coral 350
 pre-emit critique: P4 H4 E4 S5 R3 V4
 ```
 
@@ -22,9 +22,9 @@ budgets, and the anti-pattern list.
 |---|---|
 | **Audience** | Spanish-speaking movie browser. Opens for 30 seconds between decisions. Wants quick answers, no friction |
 | **Use case** | "What's playing, what's good, where can I watch it" — three taps from launch to detail |
-| **Tone** | Cinematic, calm. Dark like a theater. Not playful, not corporate |
+| **Tone** | Cinematic, calm. Dark like a theater or bright like a daytime poster. Not playful, not corporate |
 | **Genre** | atmospheric — restraint with weight |
-| **Theme** | Navy paper, coral accent, amber rating |
+| **Themes** | Dark (default) + Light. Both anchored on navy with coral accent. User picks via Settings |
 
 These were inferred, not asked.
 
@@ -32,42 +32,52 @@ These were inferred, not asked.
 
 ## 2. Colour
 
-cinemapedia is **dark-only**. There is no light mode.
+cinemapedia ships two themes. Both anchor on navy with the same coral accent — the brand stays
+consistent across modes; only the surrounding surfaces flip.
 
-### Surface elevation
+### Surface elevation (per mode)
 
-Four steps, each carries a trace of the navy anchor. Lighter means higher.
+Four steps, lighter means higher. The same name resolves to different hex per brightness through
+`context.colors` (see `lib/config/theme/theme_context.dart`).
 
-| Token | Hex | Use |
-|---|---|---|
-| `paper` | `#0E1427` | Screen background, deepest navy |
-| `surface` | `#121A34` | Cards, sheets, input fill |
-| `surfaceRaised` | `#16213E` | Pressed, highlighted, nav chip background |
-| `surfaceHighest` | `#1B1B2F` | Modal, sheet, full-bleed overlay |
+| Token | Dark | Light | Use |
+|---|---|---|---|
+| `paper` | `#0E1427` | `#F5F5F7` | Screen background |
+| `surface` | `#121A34` | `#FFFFFF` | Cards, sheets, input fill |
+| `surfaceRaised` | `#16213E` | `#EBEBEF` | Pressed, nav chip background |
+| `surfaceHighest` | `#1B1B2F` | `#E0E0E5` | Modal, sheet, full-bleed overlay |
 
-### Foreground
+### Foreground (per mode)
 
-| Token | Source | Use |
-|---|---|---|
-| `text` | `Colors.white` | Primary text, icons |
-| `textMuted` | white 70 % | Secondary text |
-| `textHint` | white 40 % | Placeholders, disabled |
-| `icon` | `Colors.white` | Default icons |
-| `iconMuted` | white 60 % | Secondary icons |
-| `rule` | white 12 % | Dividers, hairline borders |
-| `outlineVariant` | white 20 % | Heavier borders, focused states |
+| Token | Dark | Light | Use |
+|---|---|---|---|
+| `text` | `#FFFFFF` | `#0E1427` | Primary text, icons |
+| `textMuted` | white 70 % | navy 60 % | Secondary text |
+| `textHint` | white 40 % | navy 40 % | Placeholders, disabled |
+| `icon` | white | `#0E1427` | Default icons |
+| `iconMuted` | white 60 % | navy 60 % | Secondary icons |
+| `rule` | white 12 % | black 12 % | Dividers, hairline borders |
+| `outlineVariant` | white 20 % | black 20 % | Heavier borders, focused states |
 
 ### Accent
 
-The accent is a vibrant coral-pink (`#FF4D6D`). It reads against navy without competing with amber
-star ratings. Amber is reserved for ratings — never as a primary action colour.
+Same coral on both grounds. Light mode uses a slightly darker variant for contrast on white.
 
-| Token | Hex | Use |
-|---|---|---|
-| `accent` | `#FF4D6D` | Favourite toggle on, FAB, focused input border |
-| `accentInk` | white | Text or icon on `accent` |
-| `rating` | `#FFC107` | Star badges only |
-| `danger` | `#E53935` | Destructive actions only |
+| Token | Dark | Light | Use |
+|---|---|---|---|
+| `accent` | `#FF4D6D` | `#E63E5E` | Favourite toggle on, FAB, focused border |
+| `accentInk` | `#FFFFFF` | `#FFFFFF` | Text or icon on `accent` |
+| `rating` | `#FFC107` | `#F5A300` | Star badges only |
+| `danger` | `#E53935` | `#E53935` | Destructive actions only |
+
+### Hero gradient (per mode)
+
+The full-bleed gradient behind HomeView, CategoriesView, FavoritesView, MoviesByGenreScreen,
+FullScreenLoader. Each component reads `context.colors.heroGradient`.
+
+| Dark | Light |
+|---|---|
+| black → `#0E1427` → `#121A34` | `#E8EAF0` → `#F5F5F7` → `#FFFFFF` |
 
 ### Accent discipline
 
@@ -76,6 +86,7 @@ The accent is a highlighter, not a colour block. Allowed on:
 - The FAB (when one exists)
 - The focused input border
 - The active bottom-nav chip
+- The onboarding dots indicator
 
 **Not** allowed as a header band, a section background, or a page-width fill.
 
@@ -218,22 +229,18 @@ A widget that hardcodes a colour, a size, a radius, or a duration is a bug. Refe
 
 ## 9. Migration status
 
-Phase 1 ships the foundation. Migration is incremental — one screen per phase.
-
 | Surface | Status |
 |---|---|
-| `AppTheme` (ThemeData assembly) | ✅ Done in phase 1 |
-| `CustomAppbar` | ✅ Done in phase 1 (demonstrative) |
-| `CustomBottomNavigation` | Pending (phase 1 follow-up) |
-| `MoviesSlideshow` | Pending |
-| `MovieHorizontalListview` | Pending |
-| `TopTenMoviesListview` | Pending |
-| `MovieMasonry` | Pending |
-| `FullScreenLoader` | Pending |
-| `CategoriesView`, `FavoritesView`, `HomeView` | Pending |
-| `MovieScreen`, `ActorScreen`, `MoviesByGenreScreen` | Pending (phase 7 split + migrate) |
-| `SearchMoviesDelegate` | Pending |
+| `AppColors` (light + dark palettes, gradients) | ✅ Done (theme work) |
+| `AppTheme` (dual `ThemeData`) | ✅ Done |
+| `themeModeProvider` + `theme_context.dart` | ✅ Done |
+| `MaterialApp.themeMode` wired to provider | ✅ Done |
+| `CustomAppbar`, `CustomBottomNavigation`, `OnboardingScreen`, `SettingsScreen`, `EmptyStateWidget`, `ErrorRetryWidget`, `SkeletonLoader`, `AnimatedHeartButton`, `DoubleTapToFavorite` | ✅ Migrated to `context.colors` |
+| `HomeView`, `FavoritesView`, `CategoriesView`, `MoviesByGenreScreen`, `FullScreenLoader` hero gradients | ✅ Migrated |
+| `MoviesSlideshow` content colours (text on poster, dots) | Pending |
+| `MovieScreen`, `ActorScreen` detail layouts | Pending (deferred — many `Colors.white` calls inside image overlays that are intentionally always-white for image legibility) |
+| `MovieHorizontalListview`, `TopTenMoviesListview`, `MovieMasonry` cards | Pending |
 
-Each migration replaces literal values with the matching token. Behaviour stays identical; the diff
-is purely cosmetic at the code level. The migration status table lives at the top of each
-successive phase's `Improve_design_functionaly.md` update.
+Deferred intentionally: `MovieScreen` and `ActorScreen` are image-heavy. White text on a darkened
+poster overlay is correct in both themes — image legibility does not invert with the theme. Those
+remaining `Colors.white` calls are intentional, not bugs.

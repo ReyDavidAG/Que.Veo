@@ -1,20 +1,18 @@
-import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/config/theme/app_spacing.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/presentations/delegates/search_movies_delegate.dart';
 import 'package:cinemapedia/presentations/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Reference migration to the token system. Reads colours from `AppColors` and
-/// spacing from `AppSpacing`. The rest of the codebase still has hardcoded
-/// values — that is intentional, future phases will follow this pattern.
 class CustomAppbar extends ConsumerWidget {
   const CustomAppbar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.text);
+    final colors = context.colors;
+    final textStyle = Theme.of(context).textTheme.titleLarge?.copyWith(color: colors.text);
 
     return SafeArea(
       bottom: false,
@@ -22,7 +20,7 @@ class CustomAppbar extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding, vertical: AppSpacing.xs),
         child: Row(
           children: [
-            const Icon(Icons.movie_filter_sharp, size: 28, color: AppColors.icon),
+            Icon(Icons.movie_filter_sharp, size: 28, color: colors.icon),
             const SizedBox(width: AppSpacing.sm),
             Text('QuéVeo', style: textStyle),
             const Spacer(),
@@ -45,13 +43,13 @@ class CustomAppbar extends ConsumerWidget {
                 }
               },
               icon: const Icon(Icons.search),
-              color: AppColors.icon,
+              color: colors.icon,
               tooltip: 'Buscar',
             ),
             IconButton(
               onPressed: () => context.push('/settings'),
               icon: const Icon(Icons.settings_outlined),
-              color: AppColors.icon,
+              color: colors.icon,
               tooltip: 'Ajustes',
             ),
           ],

@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/config/theme/app_spacing.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 
 /// Shared empty state — one sentence, optional body, optional CTA. No illustration.
@@ -28,6 +28,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return Center(
@@ -38,19 +39,19 @@ class EmptyStateWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 56, color: AppColors.iconMuted),
+              Icon(icon, size: 56, color: colors.iconMuted),
               const SizedBox(height: AppSpacing.md),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: textTheme.titleMedium?.copyWith(color: AppColors.text),
+                style: textTheme.titleMedium?.copyWith(color: colors.text),
               ),
               if (body != null) ...[
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   body!,
                   textAlign: TextAlign.center,
-                  style: textTheme.bodyMedium?.copyWith(color: AppColors.textMuted),
+                  style: textTheme.bodyMedium?.copyWith(color: colors.textMuted),
                 ),
               ],
               if (actionLabel != null && onAction != null) ...[
@@ -58,8 +59,8 @@ class EmptyStateWidget extends StatelessWidget {
                 FilledButton(
                   onPressed: onAction,
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: AppColors.accentInk,
+                    backgroundColor: colors.accent,
+                    foregroundColor: colors.accentInk,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
                     ),

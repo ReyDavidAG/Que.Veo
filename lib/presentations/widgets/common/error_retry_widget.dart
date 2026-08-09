@@ -1,6 +1,6 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/config/theme/app_spacing.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 
 /// Shared error state — same shape as [EmptyStateWidget], with the action
@@ -23,6 +23,7 @@ class ErrorRetryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
     final message = _safeMessage(error);
 
@@ -34,27 +35,27 @@ class ErrorRetryWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 56, color: AppColors.icon),
+              Icon(Icons.error_outline, size: 56, color: colors.icon),
               const SizedBox(height: AppSpacing.md),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: textTheme.titleMedium?.copyWith(color: AppColors.text),
+                style: textTheme.titleMedium?.copyWith(color: colors.text),
               ),
               if (message != null) ...[
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   message,
                   textAlign: TextAlign.center,
-                  style: textTheme.bodyMedium?.copyWith(color: AppColors.textMuted),
+                  style: textTheme.bodyMedium?.copyWith(color: colors.textMuted),
                 ),
               ],
               const SizedBox(height: AppSpacing.lg),
               FilledButton(
                 onPressed: onRetry,
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.accent,
-                  foregroundColor: AppColors.accentInk,
+                  backgroundColor: colors.accent,
+                  foregroundColor: colors.accentInk,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppSpacing.radiusCard),
                   ),

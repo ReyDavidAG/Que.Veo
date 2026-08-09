@@ -305,6 +305,7 @@ Cada fase es una rama `feature/<nombre>`, merge `--no-ff` a `develop` al termina
 | 5 | Compartir y watch providers | Pendiente |
 | 6 | Búsqueda con historial | Pendiente |
 | 7 | Pulido y limpieza | Pendiente |
+| 8 | Temas dark + light | ✅ Hecho en `feature/dual-theme` (paleta dual + themeModeProvider + migraciones de gradient/widget) |
 
 ### Phase 0 — qué se hizo, qué se saltó
 
