@@ -120,7 +120,6 @@ class _GlassOverlayAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 72,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -133,11 +132,9 @@ class _GlassOverlayAppBar extends StatelessWidget {
           stops: const [0, .6, 1],
         ),
       ),
-      alignment: Alignment.center,
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        child: CustomAppbar(),
-      ),
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.only(bottom: 8),
+      child: const CustomAppbar(),
     );
   }
 }

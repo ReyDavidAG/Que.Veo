@@ -32,11 +32,15 @@ class _MoviesSlideshowState extends State<MoviesSlideshow> {
             imageUrl: movies[_currentIndex].posterPath,
           ),
         ),
-        const Positioned(
+        // Pass-through overlays: taps fall through to the InkWell on each slide.
+        Positioned(
           top: 0,
           left: 0,
           right: 0,
-          child: _TopShade(),
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            child: _TopShade(),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(0),
@@ -65,10 +69,13 @@ class _MoviesSlideshowState extends State<MoviesSlideshow> {
           left: 0,
           right: 0,
           bottom: 0,
-          child: _BottomOverlayContent(
-            movie: widget.movies[_currentIndex],
-            currentIndex: _currentIndex,
-            total: widget.movies.length,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            child: _BottomOverlayContent(
+              movie: widget.movies[_currentIndex],
+              currentIndex: _currentIndex,
+              total: widget.movies.length,
+            ),
           ),
         ),
       ],
