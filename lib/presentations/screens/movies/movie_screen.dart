@@ -530,6 +530,7 @@ class _NewWatchProvidersDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     // 1. Detección automática de país, con fallback a 'US'
     final countryCode = Localizations.localeOf(context).countryCode ?? 'US';
     final options = watchProviders.forCountry(countryCode) ?? watchProviders.results['US'];
@@ -569,19 +570,23 @@ class _NewWatchProvidersDisplay extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               'Dónde ver',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: colors.text,
+              ),
             ),
           ),
           TabBar(
             tabs: tabs,
             isScrollable: false,
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white54,
+            indicatorColor: colors.accent,
+            labelColor: colors.text,
+            unselectedLabelColor: colors.textMuted,
           ),
           SizedBox(
             height: 120, // Altura para el contenido de las tabs
