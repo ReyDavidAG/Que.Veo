@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -78,35 +79,54 @@ class _TopTenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final colors = context.colors;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          if (title != null) _MetalDigit(digit: title!, size: 35, strokeWidth: 3.5),
+          if (title != null)
+            ShaderMask(
+              shaderCallback: (bounds) => LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [colors.text, colors.accent],
+              ).createShader(bounds),
+              child: Text(
+                title!,
+                style: textTheme.headlineMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ),
           const Spacer(),
           if (subtitle != null)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(0),
-                border: Border.all(color: onPrimary.withAlpha(89), width: 1),
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withAlpha(36),
-                    Colors.white.withAlpha(12),
-                  ],
+                  colors: [colors.accent.withAlpha(220), colors.accent.withAlpha(160)],
                 ),
+                borderRadius: BorderRadius.circular(999),
+                boxShadow: [
+                  BoxShadow(
+                    color: colors.accent.withAlpha(80),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Text(
                 subtitle!,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: Colors.white.withAlpha(230),
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: .2,
-                    ),
+                style: textTheme.labelMedium?.copyWith(
+                  color: colors.accentInk,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
+                ),
               ),
             ),
         ],
@@ -123,8 +143,7 @@ class _TopTenSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
-
+    final colors = context.colors;
     final bool twoDigits = rank >= 10;
 
     return InkWell(
@@ -163,7 +182,7 @@ class _TopTenSlide extends StatelessWidget {
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Container(
-                        color: Colors.grey[800],
+                        color: colors.surfaceRaised,
                         alignment: Alignment.center,
                         child: const SizedBox(
                           width: 22,
@@ -175,7 +194,7 @@ class _TopTenSlide extends StatelessWidget {
                     errorBuilder: (_, __, ___) => Container(
                       color: Colors.grey[900],
                       alignment: Alignment.center,
-                      child: Icon(Icons.broken_image, color: onPrimary.withAlpha(153)),
+                      child: Icon(Icons.broken_image, color: colors.iconMuted),
                     ),
                   ),
                 ),
@@ -210,7 +229,7 @@ class _RankNumber extends StatelessWidget {
     }
     return Align(
       alignment: Alignment.bottomLeft,
-      child: _MetalDigit(
+      child: _RankDigit(
         digit: '$rank',
         size: 120,
         strokeWidth: 4,
@@ -248,7 +267,7 @@ class _TwoDigitNumber extends StatelessWidget {
           Positioned(
             left: 0,
             bottom: 0,
-            child: _MetalDigit(
+            child: _RankDigit(
               digit: first,
               size: oneSize,
               strokeWidth: strokeWidth,
@@ -257,7 +276,7 @@ class _TwoDigitNumber extends StatelessWidget {
           Positioned(
             left: zeroRightShift,
             bottom: zeroUpShift,
-            child: _MetalDigit(
+            child: _RankDigit(
               digit: second,
               size: zeroSize,
               strokeWidth: strokeWidth,
@@ -269,12 +288,14 @@ class _TwoDigitNumber extends StatelessWidget {
   }
 }
 
-class _MetalDigit extends StatelessWidget {
+/// Painted digit with a metallic-looking gradient in dark mode and an accent
+/// gradient in light mode. Theme-aware so it stays legible on the hero behind it.
+class _RankDigit extends StatelessWidget {
   final String digit;
   final double size;
   final double strokeWidth;
 
-  const _MetalDigit({
+  const _RankDigit({
     required this.digit,
     required this.size,
     required this.strokeWidth,
@@ -282,20 +303,30 @@ class _MetalDigit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final Rect rect = Rect.fromLTWH(0, 0, size, size);
+
+    final List<Color> gradientColors = isDark
+        ? const [
+            Color(0xFFF7F7F8),
+            Color(0xFFE6E9EE),
+            Color(0xFFBCC3CC),
+          ]
+        : [
+            colors.accent,
+            colors.accent.withAlpha(180),
+            colors.accent.withAlpha(220),
+          ];
 
     final Paint metallicStroke = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
-      ..shader = const LinearGradient(
+      ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          Color(0xFFF7F7F8),
-          Color(0xFFE6E9EE),
-          Color(0xFFBCC3CC),
-        ],
-        stops: [0.0, 0.45, 1.0],
+        colors: gradientColors,
+        stops: const [0.0, 0.45, 1.0],
       ).createShader(rect);
 
     final Paint sideHighlightStroke = Paint()
@@ -304,10 +335,15 @@ class _MetalDigit extends StatelessWidget {
       ..shader = LinearGradient(
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
-        colors: [
-          const Color(0xFFFFFFFF).withAlpha(160),
-          const Color(0xFFFFFFFF).withAlpha(0),
-        ],
+        colors: isDark
+            ? [
+                const Color(0xFFFFFFFF).withAlpha(160),
+                const Color(0xFFFFFFFF).withAlpha(0),
+              ]
+            : [
+                Colors.white.withAlpha(180),
+                Colors.white.withAlpha(0),
+              ],
         stops: const [0.0, 0.35],
       ).createShader(rect);
 
@@ -319,6 +355,7 @@ class _MetalDigit extends StatelessWidget {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
+            // Drop shadow
             Positioned(
               left: 0,
               bottom: 0,
@@ -330,12 +367,14 @@ class _MetalDigit extends StatelessWidget {
                   style: TextStyle(
                     fontSize: size,
                     fontWeight: FontWeight.w900,
+                    color: Colors.black.withAlpha(isDark ? 200 : 120),
                     height: 1.0,
                     letterSpacing: -2,
                   ),
                 ),
               ),
             ),
+            // Metallic / accent stroke
             Positioned(
               left: 0,
               bottom: 0,
@@ -351,20 +390,7 @@ class _MetalDigit extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              left: 0,
-              bottom: 0,
-              child: Text(
-                digit,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: size,
-                  fontWeight: FontWeight.w900,
-                  height: 1.0,
-                  letterSpacing: -2,
-                ),
-              ),
-            ),
+            // Side highlight
             Positioned(
               left: 0,
               bottom: 0,
