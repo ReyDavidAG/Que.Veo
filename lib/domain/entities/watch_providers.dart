@@ -14,10 +14,10 @@ class WatchProviders {
 
 class CountryWatchOptions {
   final String link;
-  final List<ProviderRef> flatrate;
-  final List<ProviderRef> rent;
-  final List<ProviderRef> buy;
-  final List<ProviderRef> ads;
+  final List<ProviderRefData> flatrate;
+  final List<ProviderRefData> rent;
+  final List<ProviderRefData> buy;
+  final List<ProviderRefData> ads;
 
   CountryWatchOptions({
     required this.link,
@@ -28,9 +28,9 @@ class CountryWatchOptions {
   });
 
   factory CountryWatchOptions.fromJson(Map<String, dynamic> json) {
-    List<ProviderRef> list(String key) {
+    List<ProviderRefData> list(String key) {
       final arr = json[key] as List<dynamic>? ?? const [];
-      return arr.map((e) => ProviderRef.fromJson(e)).toList()
+      return arr.map((e) => ProviderRefData.fromJson(e)).toList()
         ..sort((a, b) => (a.displayPriority).compareTo(b.displayPriority));
     }
 
@@ -43,7 +43,7 @@ class CountryWatchOptions {
     );
   }
 
-  List<ProviderRef> byType(ProviderType type) {
+  List<ProviderRefData> byType(ProviderType type) {
     switch (type) {
       case ProviderType.flatrate:
         return flatrate;
@@ -57,20 +57,20 @@ class CountryWatchOptions {
   }
 }
 
-class ProviderRef {
+class ProviderRefData {
   final String logoPath;
   final int providerId;
   final String providerName;
   final int displayPriority;
 
-  ProviderRef({
+  ProviderRefData({
     required this.logoPath,
     required this.providerId,
     required this.providerName,
     required this.displayPriority,
   });
 
-  factory ProviderRef.fromJson(Map<String, dynamic> json) => ProviderRef(
+  factory ProviderRefData.fromJson(Map<String, dynamic> json) => ProviderRefData(
         logoPath: json['logo_path'] as String? ?? '',
         providerId: (json['provider_id'] as num).toInt(),
         providerName: json['provider_name'] as String? ?? '',

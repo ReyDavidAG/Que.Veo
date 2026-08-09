@@ -69,23 +69,12 @@ class _MovieMasonryState extends State<MovieMasonry> {
         itemCount: widget.movies.length,
         itemBuilder: (context, index) {
           final movie = widget.movies[index];
-          final tile = MoviePosterLink(
+          return MoviePosterLink(
             movie: movie,
             onLongPress: widget.onMovieLongPress == null
                 ? null
                 : () => widget.onMovieLongPress!(movie),
           );
-
-          if (index == 1) {
-            return Column(
-              children: [
-                const SizedBox(height: 30),
-                tile,
-              ],
-            );
-          }
-
-          return tile;
         },
       ),
     );

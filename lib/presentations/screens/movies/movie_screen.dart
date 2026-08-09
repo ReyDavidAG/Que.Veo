@@ -16,8 +16,7 @@ import 'package:cinemapedia/presentations/widgets/actors/actor_horizontal_list_v
 import 'package:cinemapedia/presentations/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// Ocultamos 'ProviderRef' de Riverpod para usar el de nuestra entidad
-import 'package:flutter_riverpod/flutter_riverpod.dart' hide ProviderRef;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -597,7 +596,7 @@ class _NewWatchProvidersDisplay extends StatelessWidget {
 
 // --- WIDGET SECUNDARIO PARA EL CONTENIDO DE LAS TABS ---
 class _ProviderGrid extends StatelessWidget {
-  final List<wp.ProviderRef> providers;
+  final List<wp.ProviderRefData> providers;
   final String link;
   const _ProviderGrid({required this.providers, required this.link});
 
@@ -625,7 +624,7 @@ class _ProviderGrid extends StatelessWidget {
 
 // --- WIDGET PARA MOSTRAR CADA LOGO + NOMBRE (VERSIÓN MEJORADA) ---
 class _ProviderChip extends StatelessWidget {
-  final wp.ProviderRef provider;
+  final wp.ProviderRefData provider;
   final String? deepLinkUrl;
   const _ProviderChip({required this.provider, this.deepLinkUrl});
 
