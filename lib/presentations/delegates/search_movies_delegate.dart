@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/storage/app_preferences.dart';
-import 'package:cinemapedia/config/theme/app_colors.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -244,7 +244,7 @@ class _IdleHint extends StatelessWidget {
                 Text(
                   'Búsquedas recientes',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.textHint,
+                        color: context.colors.textHint,
                         letterSpacing: 1.2,
                       ),
                 ),
@@ -258,11 +258,11 @@ class _IdleHint extends StatelessWidget {
                         (q) => ActionChip(
                           label: Text(q),
                           onPressed: () => onSelect(q),
-                          backgroundColor: AppColors.surface,
-                          labelStyle: const TextStyle(color: AppColors.text),
+                          backgroundColor: context.colors.surface,
+                          labelStyle: TextStyle(color: context.colors.text),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: const BorderSide(color: AppColors.rule),
+                            side: BorderSide(color: context.colors.rule),
                           ),
                         ),
                       )

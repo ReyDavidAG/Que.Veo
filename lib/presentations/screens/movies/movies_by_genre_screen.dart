@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cinemapedia/presentations/providers/movies/movie_provider.dart';
@@ -192,12 +193,12 @@ class _StaticBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.black, Color(0xFF0E1427), Color(0xFF121A34)],
-          stops: [0.0, 0.35, 0.95],
+          colors: context.colors.heroGradient,
+          stops: const [0.0, 0.35, 0.95],
         ),
       ),
     );

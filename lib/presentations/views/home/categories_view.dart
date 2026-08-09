@@ -1,3 +1,4 @@
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/domain/entities/genre.dart';
 import 'package:cinemapedia/presentations/providers/genre/genre_provider.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +25,15 @@ class CategoriesViewState extends ConsumerState<CategoriesView> {
   @override
   Widget build(BuildContext context) {
     final genres = ref.watch(genreProvider);
+    final colors = context.colors;
+    final heroGradient = colors.heroGradient;
 
     if (genres.isEmpty) {
-      return const Scaffold(
-        backgroundColor: Color(0xFF121A34),
-        body: Center(
+      return Scaffold(
+        backgroundColor: colors.paper,
+        body: const Center(
             child: CircularProgressIndicator(
           strokeWidth: 2,
-          color: Colors.white,
         )),
       );
     }
@@ -40,12 +42,12 @@ class CategoriesViewState extends ConsumerState<CategoriesView> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.black, Color(0xFF0E1427), Color(0xFF121A34)],
-                stops: [0.0, 0.2, 0.85],
+                colors: heroGradient,
+                stops: const [0.0, 0.2, 0.85],
               ),
             ),
             child: Column(

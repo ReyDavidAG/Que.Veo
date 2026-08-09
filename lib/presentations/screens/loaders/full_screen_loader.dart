@@ -1,3 +1,4 @@
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 
 class FullScreenLoader extends StatelessWidget {
@@ -20,17 +21,14 @@ class FullScreenLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final colors = context.colors;
     final textStyles = Theme.of(context).textTheme;
+    final heroGradient = colors.heroGradient;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF1B1B2F), // azul oscuro elegante
-            Color(0xFF16213E), // azul profundo
-            Color(0xFF0F3460), // azul vibrante
-          ],
+          colors: heroGradient,
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -42,14 +40,14 @@ class FullScreenLoader extends StatelessWidget {
             Text(
               'Espere por favor',
               style: textStyles.headlineSmall?.copyWith(
-                color: colors.onPrimary,
+                color: colors.text,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 20),
             CircularProgressIndicator(
               strokeWidth: 4.0,
-              color: colors.primary,
+              color: colors.accent,
             ),
             const SizedBox(height: 20),
             StreamBuilder<String>(
@@ -59,7 +57,7 @@ class FullScreenLoader extends StatelessWidget {
                 return Text(
                   message,
                   style: textStyles.bodyLarge?.copyWith(
-                    color: colors.onPrimary.withOpacity(0.8),
+                    color: colors.textMuted,
                   ),
                 );
               },

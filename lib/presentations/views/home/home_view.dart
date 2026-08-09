@@ -1,3 +1,4 @@
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/presentations/providers/movies/initial_loading_provider.dart';
 import 'package:cinemapedia/presentations/providers/movies/movie_provider.dart';
 import 'package:cinemapedia/presentations/providers/movies/movies_slideshow_provider.dart';
@@ -44,16 +45,17 @@ class HomeViewState extends ConsumerState<HomeView> {
     final upcomingMovies = ref.watch(upcomingMoviesProvider);
     final topRatedMovies = ref.watch(topRatedMoviesProvider);
     final moviesSlideshow = ref.watch(moviesSlideshowProvider);
+    final heroGradient = context.colors.heroGradient;
 
     return Stack(
       children: [
         Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.black, Color(0xFF0E1427), Color(0xFF121A34)],
-              stops: [0.0, 0.85, 0.95],
+              colors: heroGradient,
+              stops: const [0.0, 0.85, 0.95],
             ),
           ),
           child: CustomScrollView(
@@ -119,14 +121,11 @@ class _GlassOverlayAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glassGradient = context.colors.glassGradient;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Colors.black.withAlpha(200),
-            Colors.black.withAlpha(80),
-            Colors.transparent,
-          ],
+          colors: glassGradient,
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: const [0, .6, 1],

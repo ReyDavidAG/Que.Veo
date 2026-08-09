@@ -3,54 +3,66 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
-/// Wires the design tokens into a `ThemeData` cinemapedia can boot with.
+/// Builds the two `ThemeData` cinemapedia ships with.
 ///
-/// cinemapedia is dark-only. `AppColors`, `AppTypography`, `AppSpacing`, and
-/// `AppMotion` are the source of truth — `ThemeData` is the bridge between them
-/// and Flutter's widget tree.
+/// cinemapedia supports both dark (default) and light. The choice lives in
+/// `AppPreferences.themeMode` and is wired into `MaterialApp.themeMode` via
+/// `themeModeProvider`. `Theme.of(context).brightness` is the per-widget
+/// switch every screen should read.
 class AppTheme {
-  ThemeData getTheme() {
-    const colorScheme = ColorScheme(
-      brightness: Brightness.dark,
-      primary: AppColors.accent,
+  static ThemeData light() => _build(Brightness.light);
+  static ThemeData dark() => _build(Brightness.dark);
+
+  static ThemeData _build(Brightness brightness) {
+    final stack = AppColors.surfaceStack(brightness);
+    final colorScheme = ColorScheme(
+      brightness: brightness,
+      primary: AppColors.accent(brightness),
       onPrimary: AppColors.accentInk,
-      secondary: AppColors.accent,
+      secondary: AppColors.accent(brightness),
       onSecondary: AppColors.accentInk,
-      tertiary: AppColors.rating,
-      onTertiary: AppColors.text,
+      tertiary: AppColors.rating(brightness),
+      onTertiary: AppColors.text(brightness),
       error: AppColors.danger,
-      onError: AppColors.text,
-      surface: AppColors.paper,
-      onSurface: AppColors.text,
-      surfaceContainerLowest: AppColors.paper,
-      surfaceContainerLow: AppColors.surface,
-      surfaceContainer: AppColors.surface,
-      surfaceContainerHigh: AppColors.surfaceRaised,
-      surfaceContainerHighest: AppColors.surfaceHighest,
-      outline: AppColors.rule,
-      outlineVariant: AppColors.outlineVariant,
+      onError: AppColors.accentInk,
+      surface: stack[0],
+      onSurface: AppColors.text(brightness),
+      surfaceContainerLowest: stack[0],
+      surfaceContainerLow: stack[1],
+      surfaceContainer: stack[1],
+      surfaceContainerHigh: stack[2],
+      surfaceContainerHighest: stack[3],
+      outline: AppColors.rule(brightness),
+      outlineVariant: AppColors.outlineVariant(brightness),
     );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.paper,
-      textTheme: AppTypography.textTheme,
-      appBarTheme: const AppBarTheme(
+      scaffoldBackgroundColor: stack[0],
+      textTheme: AppTypography.textTheme.apply(
+        bodyColor: AppColors.text(brightness),
+        displayColor: AppColors.text(brightness),
+      ),
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: IconThemeData(color: AppColors.icon),
-        titleTextStyle: TextStyle(color: AppColors.text, fontSize: 18, fontWeight: FontWeight.w700),
+        iconTheme: IconThemeData(color: AppColors.icon(brightness)),
+        titleTextStyle: TextStyle(
+          color: AppColors.text(brightness),
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
       ),
-      iconTheme: const IconThemeData(color: AppColors.icon),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      iconTheme: IconThemeData(color: AppColors.icon(brightness)),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        selectedItemColor: AppColors.text,
-        unselectedItemColor: Color(0x99FFFFFF), // 60% white — to be replaced by token in widget migration
+        selectedItemColor: AppColors.text(brightness),
+        unselectedItemColor: AppColors.iconMuted(brightness),
       ),
     );
   }

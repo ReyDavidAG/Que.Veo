@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +27,8 @@ class CustomBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = context.colors;
+    final isDark = theme.brightness == Brightness.dark;
 
     return SafeArea(
       top: false,
@@ -37,28 +40,30 @@ class CustomBottomNavigation extends StatelessWidget {
             filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF16213E).withAlpha(170),
-                border: Border.all(color: Colors.white.withAlpha(28)),
+                color: isDark
+                    ? colors.surfaceRaised.withAlpha(170)
+                    : colors.surface.withAlpha(220),
+                border: Border.all(color: colors.rule),
               ),
               child: Theme(
                 data: theme.copyWith(
-                  splashColor: Colors.white.withAlpha(24),
-                  highlightColor: Colors.white.withAlpha(20),
+                  splashColor: colors.iconMuted.withAlpha(40),
+                  highlightColor: colors.iconMuted.withAlpha(30),
                 ),
                 child: BottomNavigationBar(
                   backgroundColor: Colors.transparent,
                   elevation: 0,
-                  selectedItemColor: Colors.white,
-                  unselectedItemColor: Colors.white.withAlpha(150),
+                  selectedItemColor: colors.text,
+                  unselectedItemColor: colors.iconMuted,
                   onTap: (index) => onTap(index, context),
                   currentIndex: currentIndex,
                   selectedLabelStyle: theme.textTheme.labelSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: colors.text,
                     letterSpacing: .2,
                   ),
                   unselectedLabelStyle: theme.textTheme.labelSmall?.copyWith(
-                    color: Colors.white.withAlpha(150),
+                    color: colors.iconMuted,
                   ),
                   showUnselectedLabels: true,
                   type: BottomNavigationBarType.fixed,

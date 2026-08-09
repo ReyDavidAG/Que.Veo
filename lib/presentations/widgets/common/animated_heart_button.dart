@@ -1,5 +1,5 @@
-import 'package:cinemapedia/config/theme/app_colors.dart';
 import 'package:cinemapedia/config/theme/app_motion.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -69,7 +69,7 @@ class _AnimatedHeartButtonState extends State<AnimatedHeartButton> with SingleTi
             widget.isFavorite ? Icons.favorite : Icons.favorite_border,
             key: ValueKey(widget.isFavorite),
             size: widget.size,
-            color: widget.isFavorite ? AppColors.accent : AppColors.icon,
+            color: widget.isFavorite ? context.colors.accent : context.colors.icon,
             shadows: widget.isFavorite
                 ? [const Shadow(color: Color(0x66000000), blurRadius: 8, offset: Offset(0, 2))]
                 : null,
