@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/domain/entities/actor_details.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentations/providers/movies/actor_details_repository.dart';
@@ -57,6 +58,8 @@ class _ActorView extends StatelessWidget {
   }
 }
 
+// Hero sliver — intentionally dark: photo + name overlay should look like a movie poster
+// in both themes. Foreground stays Colors.white because it sits on the photo + scrim.
 class _ActorSliverAppBar extends StatelessWidget {
   final ActorDetails actor;
   const _ActorSliverAppBar({required this.actor});
@@ -152,16 +155,16 @@ class _ActorDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final text = Theme.of(context).textTheme;
+    final colors = context.colors;
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.black, Color(0xFF0E1427), Color(0xFF121A34)],
-          stops: [0.0, 0.35, 0.95],
+          colors: colors.heroGradient,
+          stops: const [0.0, 0.35, 0.95],
         ),
       ),
       child: Padding(
@@ -180,8 +183,8 @@ class _ActorDetailsSection extends StatelessWidget {
                           height: 160,
                           width: 120,
                           alignment: Alignment.center,
-                          color: Colors.grey.shade800,
-                          child: Icon(Icons.person, size: 48, color: cs.primary),
+                          color: colors.surfaceRaised,
+                          child: Icon(Icons.person, size: 48, color: colors.accent),
                         ),
                 ),
                 const SizedBox(width: 12),
@@ -191,8 +194,8 @@ class _ActorDetailsSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(actor.name,
-                          style: text.titleLarge?.copyWith(
-                            color: Colors.white,
+                          style: textTheme.titleLarge?.copyWith(
+                            color: colors.text,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 2,
@@ -237,8 +240,8 @@ class _ActorDetailsSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('También conocido(a) como',
-                        style: text.titleMedium
-                            ?.copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
+                        style: textTheme.titleMedium
+                            ?.copyWith(color: colors.text, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 8),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -248,10 +251,10 @@ class _ActorDetailsSection extends StatelessWidget {
                         children: actor.alsoKnownAs
                             .map((aka) => Chip(
                                   label: Text(aka, overflow: TextOverflow.ellipsis),
-                                  labelStyle: const TextStyle(color: Colors.white),
-                                  backgroundColor: Colors.blueGrey,
+                                  labelStyle: TextStyle(color: colors.accentInk),
+                                  backgroundColor: colors.surfaceRaised,
                                   shape: RoundedRectangleBorder(
-                                    side: const BorderSide(color: Colors.white70),
+                                    side: BorderSide(color: colors.outlineVariant),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ))
@@ -270,15 +273,15 @@ class _ActorDetailsSection extends StatelessWidget {
               ),
             const SizedBox(height: 12),
             Text('Biografía',
-                style:
-                    text.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
+                style: textTheme.titleMedium
+                    ?.copyWith(color: colors.text, fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 60, maxHeight: 220),
               child: SingleChildScrollView(
                 child: Text(
                   actor.biography.isEmpty ? 'Sin biografía disponible' : actor.biography,
-                  style: const TextStyle(color: Colors.white70, height: 1.35),
+                  style: TextStyle(color: colors.textMuted, height: 1.35),
                 ),
               ),
             ),
@@ -297,7 +300,7 @@ class _InfoChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final colors = context.colors;
     final maxWidth = MediaQuery.of(context).size.width * 0.55;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -306,20 +309,20 @@ class _InfoChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: cs.primary.withAlpha(28),
+            color: colors.accent.withAlpha(28),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: cs.primary.withAlpha(90), width: 0.8),
+            border: Border.all(color: colors.accent.withAlpha(90), width: 0.8),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 16, color: cs.onPrimary.withAlpha(230)),
+              Icon(icon, size: 16, color: colors.accentInk.withAlpha(230)),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: cs.onPrimary.withAlpha(230),
+                    color: colors.accentInk.withAlpha(230),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.2,

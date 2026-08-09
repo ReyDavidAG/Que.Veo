@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/domain/entities/actor.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/domain/entities/movie_videos.dart';
@@ -224,13 +225,14 @@ class _MovieDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.black, Color(0xFF0E1427), Color(0xFF121A34)],
-          stops: [0.0, 0.35, 0.95],
+          colors: colors.heroGradient,
+          stops: const [0.0, 0.35, 0.95],
         ),
       ),
       child: Padding(
@@ -260,8 +262,8 @@ class _MovieDetailsSection extends StatelessWidget {
                         children: [
                           Text(
                             movie.title,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold, color: colors.text),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -273,7 +275,7 @@ class _MovieDetailsSection extends StatelessWidget {
                                 movie.overview.isEmpty
                                     ? 'Sin descripción disponible'
                                     : movie.overview,
-                                style: const TextStyle(color: Colors.white70),
+                                style: TextStyle(color: colors.textMuted),
                               ),
                             ),
                           ),
@@ -306,7 +308,7 @@ class _MovieDetailsSection extends StatelessWidget {
                                   side: BorderSide(color: genre.color),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                labelStyle: const TextStyle(color: Colors.white),
+                                labelStyle: TextStyle(color: colors.accentInk),
                               ),
                             ))
                         .toList(),
@@ -644,9 +646,9 @@ class _ProviderChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: const Color(0xFF121A34),
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white24, width: 0.5),
+          border: Border.all(color: context.colors.chipBorder, width: 0.5),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -659,13 +661,13 @@ class _ProviderChip extends StatelessWidget {
                 height: 30,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.broken_image, size: 30, color: Colors.white54),
+                    Icon(Icons.broken_image, size: 30, color: context.colors.iconMuted),
               ),
             ),
             const SizedBox(width: 8),
             Text(
               provider.providerName,
-              style: const TextStyle(fontSize: 12, color: Colors.white),
+              style: TextStyle(fontSize: 12, color: context.colors.text),
             ),
           ],
         ),
