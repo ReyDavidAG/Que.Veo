@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
+import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -86,7 +87,7 @@ class _Slide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).textTheme;
-    final colors = Theme.of(context).colorScheme;
+    final colors = context.colors;
 
     return InkWell(
       onTap: () {
@@ -112,11 +113,11 @@ class _Slide extends StatelessWidget {
                     height: 220,
                     width: 150,
                     decoration: BoxDecoration(
-                      color: Colors.grey[800],
+                      color: colors.surfaceRaised,
                       borderRadius: BorderRadius.circular(0),
                     ),
-                    child: const Center(
-                      child: CircularProgressIndicator(color: Colors.blueAccent),
+                    child: Center(
+                      child: CircularProgressIndicator(color: colors.accent),
                     ),
                   );
                 },
@@ -130,23 +131,23 @@ class _Slide extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: textStyles.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colors.onPrimary,
+                color: colors.text,
               ),
             ),
             const SizedBox(height: 4),
             // Rating y popularidad
             Row(
               children: [
-                Icon(Icons.star_half_rounded, color: Colors.amber, size: 16),
+                Icon(Icons.star_half_rounded, color: colors.rating, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   movie.voteAverage.toString(),
-                  style: textStyles.labelSmall?.copyWith(color: Colors.amber),
+                  style: textStyles.labelSmall?.copyWith(color: colors.rating),
                 ),
                 const Spacer(),
                 Text(
                   HumanFormats.number(movie.popularity),
-                  style: textStyles.labelSmall?.copyWith(color: colors.onPrimary.withOpacity(0.7)),
+                  style: textStyles.labelSmall?.copyWith(color: colors.textMuted),
                 ),
               ],
             )
@@ -165,10 +166,14 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
-        color: Theme.of(context).colorScheme.onPrimary,
-        fontWeight: FontWeight.w600,
-        overflow: TextOverflow.ellipsis);
+    final textStyles = Theme.of(context).textTheme;
+    final colors = context.colors;
+
+    final textStyle = textStyles.titleMedium?.copyWith(
+      color: colors.text,
+      fontWeight: FontWeight.w600,
+      overflow: TextOverflow.ellipsis,
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -186,17 +191,19 @@ class _Title extends StatelessWidget {
               OutlinedButton(
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: colors.accent,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                  side: BorderSide(color: colors.accent),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(0),
                   ),
                 ),
                 child: Text(
                   subtitle!,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onPrimary),
+                  style: textStyles.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: colors.text,
+                  ),
                 ),
               ),
           ],

@@ -80,10 +80,14 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             title: Text(widget.genreName,
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: context.colors.text,
+                  shadows: const [Shadow(color: Colors.black54, blurRadius: 6, offset: Offset(0, 1))],
+                )),
             centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+              icon: Icon(Icons.arrow_back_ios_new_rounded, color: context.colors.text),
               onPressed: () {
                 context.pop();
               },
@@ -98,27 +102,28 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
   }
 
   Widget _buildBody(List<Movie> movies) {
+    final colors = context.colors;
     if (movies.isEmpty) {
       if (isInitialLoadDone) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.movie_filter_outlined, color: Colors.white54, size: 60),
+              Icon(Icons.movie_filter_outlined, color: colors.iconMuted, size: 60),
               const SizedBox(height: 10),
               Text(
                 'No movies found in\n"${widget.genreName}"',
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white54, fontSize: 18),
+                style: TextStyle(color: colors.textMuted, fontSize: 18),
               ),
             ],
           ),
         );
       } else {
-        return const Center(
+        return Center(
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            color: Colors.white,
+            color: colors.accent,
           ),
         );
       }
@@ -165,10 +170,10 @@ class _MovieCard extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: movie.posterPath,
           fit: BoxFit.cover,
-          placeholder: (context, url) => const Center(
+          placeholder: (context, url) => Center(
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: Colors.white,
+              color: context.colors.accent,
             ),
           ),
           errorWidget: (context, url, error) => Container(

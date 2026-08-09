@@ -53,10 +53,10 @@ class CategoriesViewState extends ConsumerState<CategoriesView> {
             child: Column(
               children: [
                 const SizedBox(height: 50), // Más espacio para la barra de estado
-                const Text(
+                Text(
                   'Categorías',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colors.text,
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
