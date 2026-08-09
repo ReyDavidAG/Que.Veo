@@ -208,8 +208,6 @@ class _BottomOverlayContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
-
     final year = _yearFromMovie(movie);
     final rating = _ratingText(movie);
     final overview = _overview(movie);
@@ -242,8 +240,8 @@ class _BottomOverlayContent extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       rating,
-                      style: TextStyle(
-                        color: onPrimary,
+                      style: const TextStyle(
+                        color: Colors.white,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -255,8 +253,8 @@ class _BottomOverlayContent extends StatelessWidget {
                 _Chip(
                   child: Text(
                     year,
-                    style: TextStyle(
-                      color: onPrimary,
+                    style: const TextStyle(
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -272,7 +270,7 @@ class _BottomOverlayContent extends StatelessWidget {
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: onPrimary,
+                      color: Colors.white,
                       height: 1.35,
                     ),
               ),
