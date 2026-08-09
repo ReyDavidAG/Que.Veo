@@ -41,58 +41,54 @@ class SearchMoviesDelegate extends SearchDelegate<Movie?> {
   @override
   TextInputType get keyboardType => TextInputType.text;
 
-  @override
-  TextStyle? get searchFieldStyle => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: Colors.white,
-      );
+  // searchFieldStyle is left at default — the AppBarTheme's titleTextStyle +
+  // inputDecorationTheme.hintStyle drive the look.
 
   @override
   ThemeData appBarTheme(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = context.colors;
+    final isDark = theme.brightness == Brightness.dark;
 
     final appBar = AppBarTheme(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : colors.paper,
       elevation: 0,
       scrolledUnderElevation: 0,
-      surfaceTintColor: Colors.black,
-      shadowColor: Colors.black,
-      iconTheme: const IconThemeData(color: Colors.white),
+      surfaceTintColor: isDark ? Colors.black : colors.paper,
+      shadowColor: isDark ? Colors.black : colors.paper,
+      iconTheme: IconThemeData(color: colors.icon),
       titleTextStyle: theme.textTheme.titleMedium?.copyWith(
-        color: Colors.white,
+        color: colors.text,
         fontWeight: FontWeight.w700,
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
     );
 
     return theme.copyWith(
       appBarTheme: appBar,
-      scaffoldBackgroundColor: Colors.black,
-      colorScheme: theme.colorScheme.copyWith(surface: Colors.black),
+      scaffoldBackgroundColor: isDark ? Colors.black : colors.paper,
+      colorScheme: theme.colorScheme.copyWith(surface: isDark ? Colors.black : colors.paper),
       inputDecorationTheme: InputDecorationTheme(
         isDense: true,
         filled: true,
-        fillColor: Colors.white.withAlpha(26),
-        hintStyle: theme.textTheme.bodyMedium?.copyWith(
-          color: Colors.white.withAlpha(170),
-        ),
+        fillColor: colors.surface,
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(color: colors.textHint),
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.white.withAlpha(60), width: 1),
+          borderSide: BorderSide(color: colors.outlineVariant, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.white.withAlpha(60), width: 1),
+          borderSide: BorderSide(color: colors.outlineVariant, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.white, width: 1.2),
+          borderSide: BorderSide(color: colors.accent, width: 1.2),
         ),
       ),
     );
@@ -106,17 +102,18 @@ class SearchMoviesDelegate extends SearchDelegate<Movie?> {
         stream: isLoadingStream.stream,
         builder: (context, snapshot) {
           final loading = snapshot.data ?? false;
+          final colors = context.colors;
 
           if (loading) {
-            return const Padding(
-              padding: EdgeInsets.only(right: 8),
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
               child: Center(
                 child: SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(colors.accent),
                   ),
                 ),
               ),
@@ -131,7 +128,7 @@ class SearchMoviesDelegate extends SearchDelegate<Movie?> {
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               onPressed: () => query = '',
-              icon: const Icon(Icons.close_rounded, color: Colors.white),
+              icon: Icon(Icons.close_rounded, color: colors.icon),
               iconSize: 20,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints.tightFor(width: 32, height: 32),
@@ -149,9 +146,9 @@ class SearchMoviesDelegate extends SearchDelegate<Movie?> {
   Widget? buildLeading(BuildContext context) {
     return FadeInLeft(
       child: IconButton(
-        icon: const Icon(
+        icon: Icon(
           Icons.arrow_back_ios_new_rounded,
-          color: Colors.white,
+          color: context.colors.icon,
         ),
         onPressed: () => {cleanStreams(), close(context, null)},
       ),
@@ -200,12 +197,12 @@ class _GradientScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.black, Color(0xFF0E1427), Color(0xFF121A34)],
-          stops: [0.0, 0.35, 0.95],
+          colors: context.colors.heroGradient,
+          stops: const [0.0, 0.35, 0.95],
         ),
       ),
       child: child,
@@ -219,7 +216,7 @@ class _IdleHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final colors = context.colors;
     final recents = AppPreferences.instance.recentSearches;
     return Center(
       child: FadeIn(
@@ -229,13 +226,13 @@ class _IdleHint extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.search_rounded, size: 52, color: onPrimary.withAlpha(170)),
+              Icon(Icons.search_rounded, size: 52, color: colors.iconMuted),
               const SizedBox(height: 12),
               Text(
                 'Busca por título, actor o director',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: onPrimary.withAlpha(200),
+                      color: colors.textMuted,
                       fontWeight: FontWeight.w600,
                     ),
               ),
@@ -290,7 +287,7 @@ class _ResultsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final colors = context.colors;
 
     return StreamBuilder<List<Movie>>(
       initialData: previousResults,
@@ -302,7 +299,7 @@ class _ResultsList extends StatelessWidget {
               child: Text(
                 'Sin resultados',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: onPrimary.withAlpha(200),
+                      color: colors.text,
                       fontWeight: FontWeight.w700,
                     ),
               ),
@@ -340,7 +337,7 @@ class _MovieResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final colors = context.colors;
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
@@ -348,8 +345,8 @@ class _MovieResultTile extends StatelessWidget {
       child: Ink(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Colors.white.withAlpha(20),
-          border: Border.all(color: Colors.white.withAlpha(40), width: 1),
+          color: colors.surface,
+          border: Border.all(color: colors.outlineVariant, width: 1),
         ),
         child: SizedBox(
           height: 76,
@@ -375,7 +372,7 @@ class _MovieResultTile extends StatelessWidget {
                                     ? loadingProgress.cumulativeBytesLoaded /
                                         loadingProgress.expectedTotalBytes!
                                     : null,
-                                color: onPrimary.withAlpha(180),
+                                color: colors.accent,
                               ),
                             ),
                           );
@@ -387,7 +384,7 @@ class _MovieResultTile extends StatelessWidget {
                         height: 104,
                         color: Colors.black26,
                         alignment: Alignment.center,
-                        child: Icon(Icons.broken_image, color: onPrimary.withAlpha(170)),
+                        child: Icon(Icons.broken_image, color: colors.iconMuted),
                       ),
                     ),
                     Positioned.fill(
@@ -420,7 +417,7 @@ class _MovieResultTile extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: onPrimary,
+                              color: colors.text,
                               fontWeight: FontWeight.w800,
                               letterSpacing: .2,
                             ),
@@ -430,17 +427,17 @@ class _MovieResultTile extends StatelessWidget {
                           Text(
                             _year(movie),
                             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: onPrimary.withAlpha(180),
+                                  color: colors.textMuted,
                                 ),
                           ),
                           const SizedBox(width: 12),
                           Icon(Icons.star_half_rounded,
-                              color: Colors.amber.withAlpha(230), size: 16),
+                              color: colors.rating, size: 16),
                           const SizedBox(width: 4),
                           Text(
                             movie.voteAverage.toStringAsFixed(1),
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  color: onPrimary,
+                                  color: colors.text,
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),

@@ -78,22 +78,45 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
 
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: Text(widget.genreName,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: context.colors.text,
-                  shadows: const [Shadow(color: Colors.black54, blurRadius: 6, offset: Offset(0, 1))],
-                )),
-            centerTitle: true,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios_new_rounded, color: context.colors.text),
-              onPressed: () {
-                context.pop();
-              },
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withAlpha(180),
+                    Colors.black.withAlpha(80),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.7, 1.0],
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                      onPressed: () => context.pop(),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.genreName,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 48), // balance the leading IconButton
+                  ],
+                ),
+              ),
             ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
           ),
           body: _buildBody(moviesByGenre),
         ),
