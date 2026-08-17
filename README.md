@@ -12,21 +12,21 @@ and a local [Drift](https://drift.simonbinder.eu) database for favourites — no
 # 1. Install dependencies
 flutter pub get
 
-# 2. Configure TMDB credentials
-cp .env.template .env
-# Edit .env and set THE_MOVIE_DB_KEY (and optionally THE_MOVIE_DB_ACCESS_TOKEN)
+# 2. Configure TMDB credentials locally
+cp secrets.json.example secrets.json
+# Edit secrets.json with THE_MOVIE_DB_KEY and THE_MOVIE_DB_ACCESS_TOKEN
 
 # 3. Generate the Drift schema (only needed if you change database.dart)
 dart run build_runner build --delete-conflicting-outputs
 
 # 4. Run
-flutter run -d <device-id>
+flutter run --dart-define-from-file=secrets.json -d <device-id>
 flutter run -d "iPhone 17e"
 flutter run -d <android-device-id>
 ```
 
-Get a free TMDB key at <https://www.themoviedb.org/settings/api>. The `v3` API key (query parameter)
-or `v4` read access token (Bearer header) both work.
+Get a free TMDB key at <https://www.themoviedb.org/settings/api>. This app uses the `v3` API key
+and the `v4` read access token. Do not commit `secrets.json` or share it.
 
 ## Features
 
@@ -96,9 +96,17 @@ See [CLAUDE.md](CLAUDE.md) for the full ruleset. The short version:
 ## Build
 
 ```bash
-flutter build apk              # Android release build
-flutter build ios              # iOS release build (requires signing on real device)
+# One time: store the keystore outside the repository, then copy and edit the template.
+keytool -genkeypair -v -keystore ~/queveo-release.jks -alias queveo-release -keyalg RSA -keysize 2048 -validity 10000
+cp android/key.properties.example android/key.properties
+
+# Android App Bundle for Google Play.
+flutter build appbundle --release --dart-define-from-file=secrets.json
 ```
+
+Keep the keystore, passwords, and `android/key.properties` outside version control and backed up
+securely. `--dart-define-from-file` keeps credentials out of the repository, but values compiled
+into a mobile app can still be extracted. Use a backend proxy if TMDB credentials must be secret.
 
 Both platforms are configured in `android/` and `ios/` respectively. The project deliberately
 ships **without** web, macOS, Windows, or Linux platform folders.

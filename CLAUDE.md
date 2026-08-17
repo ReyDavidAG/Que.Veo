@@ -17,20 +17,20 @@ content, Drift for local favorites, Riverpod for state, go_router for nav.
 
 - Flutter SDK: `^3.6.0`
 - Branches: `main` (PRs) / `develop` (work)
-- Org (Android): `com.example.cinemapedia` (rename in phase 0)
+- Org (Android): `com.davidag.cinemapedia`
 - No tests, no CI yet.
 
 ## Commands
 
 ```bash
-# Setup: copy env template, fill in TMDB key + access token
-cp .env.template .env
+# Setup: copy local defines template, fill in TMDB key + access token
+cp secrets.json.example secrets.json
 
 # Run
 flutter pub get
-flutter run                            # default device
-flutter run -d "iPhone 17e"            # specific simulator
-flutter run -d <android-device-id>     # android
+flutter run --dart-define-from-file=secrets.json                            # default device
+flutter run --dart-define-from-file=secrets.json -d "iPhone 17e"            # specific simulator
+flutter run --dart-define-from-file=secrets.json -d <android-device-id>     # android
 
 # Analyze (lints via flutter_lints 6.x)
 flutter analyze
@@ -50,8 +50,7 @@ dart run flutter_launcher_icons
 dart run flutter_native_splash:create
 ```
 
-`.env` is gitignored. `main()` calls `WidgetsFlutterBinding.ensureInitialized()` then
-`dotenv.load(fileName: '.env')` before `runApp` — no env = crash on first network call.
+`secrets.json` is gitignored. TMDB credentials are read from compile-time Dart defines.
 
 ## Architecture
 
@@ -263,5 +262,3 @@ A change is done only when:
 - **iOS scheme**: a previous `flutter create --platforms=ios .` was needed to repair a malformed
   `Runner.xcscheme.xml`. If iOS builds start failing with LLDB Init File errors again, re-run
   that command.
-- **Android `package`**: `com.example.cinemapedia` is the default. Should be `com.davidag.cinemapedia`
-  or similar before the first Play upload — phase 0.
