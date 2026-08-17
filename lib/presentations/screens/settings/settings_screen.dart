@@ -4,6 +4,7 @@ import 'package:cinemapedia/config/theme/theme_context.dart';
 import 'package:cinemapedia/config/theme/theme_mode_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Settings: theme mode (live), recent searches clear, app version.
 /// The language toggle is a placeholder until i18n is real.
@@ -20,7 +21,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
     final themeMode = ref.watch(themeModeProvider);
-    final version = '1.0.0'; // placeholder until pubspec.yaml is wired
+    const version = '1.0.2';
 
     return Scaffold(
       backgroundColor: colors.paper,
@@ -67,6 +68,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const SnackBar(content: Text('Historial borrado')),
               );
             },
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          const _SectionTitle('Créditos'),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.movie_outlined, color: colors.icon),
+            title: const Text('Datos y contenido por TMDB'),
+            subtitle: Text(
+              'This product uses the TMDB API but is not endorsed or certified by TMDB.',
+              style: textTheme.bodySmall?.copyWith(color: colors.textHint),
+            ),
+            onTap: () => launchUrl(
+              Uri.parse('https://www.themoviedb.org'),
+              mode: LaunchMode.externalApplication,
+            ),
           ),
           const SizedBox(height: AppSpacing.xl3),
           Center(
