@@ -4,12 +4,10 @@ import 'package:cinemapedia/config/router/app_router.dart';
 import 'package:cinemapedia/config/storage/app_preferences.dart';
 import 'package:cinemapedia/config/theme/app_theme.dart';
 import 'package:cinemapedia/config/theme/theme_mode_provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
   await AppPreferences.create();
 
   runApp(const ProviderScope(child: MainApp()));

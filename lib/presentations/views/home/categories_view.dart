@@ -52,7 +52,8 @@ class CategoriesViewState extends ConsumerState<CategoriesView> {
             ),
             child: Column(
               children: [
-                const SizedBox(height: 50), // Más espacio para la barra de estado
+                const SizedBox(
+                    height: 50), // Más espacio para la barra de estado
                 Text(
                   'Categorías',
                   style: TextStyle(
@@ -66,7 +67,8 @@ class CategoriesViewState extends ConsumerState<CategoriesView> {
                   child: GridView.builder(
                     padding: const EdgeInsets.all(20),
                     itemCount: genres.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 25,
                       crossAxisSpacing: 25,
@@ -109,7 +111,7 @@ class _CategoryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withValues(alpha: 0.4),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -136,7 +138,7 @@ class _CategoryCard extends StatelessWidget {
                   placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                   ),
                   // Fallback: si la imagen falla, muestra el diseño anterior
@@ -152,7 +154,7 @@ class _CategoryCard extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.8),
+                        Colors.black.withValues(alpha: 0.8),
                         Colors.black,
                       ],
                       stops: const [0.0, 0.6, 1.0],
@@ -173,7 +175,9 @@ class _CategoryCard extends StatelessWidget {
                         color: Colors.white,
                         size: 35,
                         shadows: [
-                          Shadow(color: Colors.black.withOpacity(0.7), blurRadius: 10),
+                          Shadow(
+                              color: Colors.black.withValues(alpha: 0.7),
+                              blurRadius: 10),
                         ],
                       ),
                       // Texto en la parte inferior
@@ -182,7 +186,11 @@ class _CategoryCard extends StatelessWidget {
                         style: textStyles.titleMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          shadows: [Shadow(color: Colors.black.withOpacity(0.9), blurRadius: 10)],
+                          shadows: [
+                            Shadow(
+                                color: Colors.black.withValues(alpha: 0.9),
+                                blurRadius: 10)
+                          ],
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
