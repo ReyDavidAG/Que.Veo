@@ -18,7 +18,8 @@ class MoviesByGenreScreen extends ConsumerStatefulWidget {
   final String genreId;
   final String genreName;
 
-  const MoviesByGenreScreen({super.key, required this.genreId, required this.genreName});
+  const MoviesByGenreScreen(
+      {super.key, required this.genreId, required this.genreName});
 
   @override
   MoviesByGenreScreenState createState() => MoviesByGenreScreenState();
@@ -31,7 +32,10 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
   @override
   void initState() {
     super.initState();
-    ref.read(moviesByGenreProvider(widget.genreId).notifier).loadNextPage().then((_) {
+    ref
+        .read(moviesByGenreProvider(widget.genreId).notifier)
+        .loadNextPage()
+        .then((_) {
       if (mounted) {
         setState(() {
           isInitialLoadDone = true;
@@ -50,7 +54,8 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
   }
 
   void scrollListener() {
-    if (scrollController.position.pixels + 200 >= scrollController.position.maxScrollExtent) {
+    if (scrollController.position.pixels + 200 >=
+        scrollController.position.maxScrollExtent) {
       ref.read(moviesByGenreProvider(widget.genreId).notifier).loadNextPage();
     }
   }
@@ -73,7 +78,9 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
     return Stack(
       children: [
         // --- FONDO ACTUALIZADO ---
-        imageUrl != null ? _DynamicBackground(imageUrl: imageUrl) : const _StaticBackground(),
+        imageUrl != null
+            ? _DynamicBackground(imageUrl: imageUrl)
+            : const _StaticBackground(),
         // -------------------------
 
         Scaffold(
@@ -98,7 +105,8 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                          color: Colors.white),
                       onPressed: () => context.pop(),
                     ),
                     Expanded(
@@ -132,7 +140,8 @@ class MoviesByGenreScreenState extends ConsumerState<MoviesByGenreScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.movie_filter_outlined, color: colors.iconMuted, size: 60),
+              Icon(Icons.movie_filter_outlined,
+                  color: colors.iconMuted, size: 60),
               const SizedBox(height: 10),
               Text(
                 'No movies found in\n"${widget.genreName}"',
@@ -200,7 +209,7 @@ class _MovieCard extends StatelessWidget {
             ),
           ),
           errorWidget: (context, url, error) => Container(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             child: const Icon(
               Icons.movie_creation_outlined,
               color: Colors.white38,
@@ -259,9 +268,9 @@ class _DynamicBackground extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(0.8),
-                Colors.black.withOpacity(0.9),
-                const Color(0xFF0E1427).withOpacity(0.95),
+                Colors.black.withValues(alpha: 0.8),
+                Colors.black.withValues(alpha: 0.9),
+                const Color(0xFF0E1427).withValues(alpha: 0.95),
                 const Color(0xFF121A34),
               ],
               stops: const [0.0, 0.3, 0.7, 0.95],
