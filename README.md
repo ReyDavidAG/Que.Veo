@@ -96,17 +96,13 @@ See [CLAUDE.md](CLAUDE.md) for the full ruleset. The short version:
 ## Build
 
 ```bash
-# One time: store the keystore outside the repository, then copy and edit the template.
-keytool -genkeypair -v -keystore ~/queveo-release.jks -alias queveo-release -keyalg RSA -keysize 2048 -validity 10000
-cp android/key.properties.example android/key.properties
-
 # Android App Bundle for Google Play.
-flutter build appbundle --release --dart-define-from-file=secrets.json
+./tool/build_release.sh
 ```
 
-Keep the keystore, passwords, and `android/key.properties` outside version control and backed up
-securely. `--dart-define-from-file` keeps credentials out of the repository, but values compiled
-into a mobile app can still be extracted. Use a backend proxy if TMDB credentials must be secret.
+The release script reads the ignored `.env`, signs with the release keystore, and reads its password
+from the macOS Keychain. Keep the keystore outside version control and backed up securely. Values
+compiled into a mobile app can still be extracted; use a backend proxy if TMDB credentials must be secret.
 
 Both platforms are configured in `android/` and `ios/` respectively. The project deliberately
 ships **without** web, macOS, Windows, or Linux platform folders.

@@ -36,14 +36,27 @@ android {
     if (keystorePropertiesFile.exists()) {
         keystorePropertiesFile.inputStream().use(keystoreProperties::load)
     }
+    fun releaseProperty(name: String, environmentName: String): String? =
+        System.getenv(environmentName) ?: keystoreProperties.getProperty(name)
+
+    val releaseStoreFile = releaseProperty("storeFile", "QUEVEO_STORE_FILE")
+    val releaseStorePassword = releaseProperty("storePassword", "QUEVEO_STORE_PASSWORD")
+    val releaseKeyAlias = releaseProperty("keyAlias", "QUEVEO_KEY_ALIAS")
+    val releaseKeyPassword = releaseProperty("keyPassword", "QUEVEO_KEY_PASSWORD")
+    val hasReleaseCredentials = listOf(
+        releaseStoreFile,
+        releaseStorePassword,
+        releaseKeyAlias,
+        releaseKeyPassword,
+    ).all { it != null }
 
     signingConfigs {
         create("release") {
-            if (keystorePropertiesFile.exists()) {
-                keyAlias = keystoreProperties.getProperty("keyAlias")
-                keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = file(keystoreProperties.getProperty("storeFile"))
-                storePassword = keystoreProperties.getProperty("storePassword")
+            if (hasReleaseCredentials) {
+                keyAlias = requireNotNull(releaseKeyAlias)
+                keyPassword = requireNotNull(releaseKeyPassword)
+                storeFile = file(requireNotNull(releaseStoreFile))
+                storePassword = requireNotNull(releaseStorePassword)
             }
         }
     }
@@ -53,9 +66,9 @@ android {
             val requiresReleaseSigning = gradle.startParameter.taskNames.any {
                 it.contains("release", ignoreCase = true)
             }
-            if (requiresReleaseSigning && !keystorePropertiesFile.exists()) {
+            if (requiresReleaseSigning && !hasReleaseCredentials) {
                 throw GradleException(
-                    "Missing android/key.properties. Copy key.properties.example and configure your release keystore.",
+                    "Missing release signing credentials. Use android/key.properties or tool/build_release.sh.",
                 )
             }
             signingConfig = signingConfigs.getByName("release")
